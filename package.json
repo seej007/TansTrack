@@ -1,0 +1,21 @@
+{
+  "name": "transitrack",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@angular/cli": "^19.2.15",
+    "@angular/core": "^19.2.14",
+    "@angular/fire": "^19.0.0",
+    "@capacitor/core": "7.4.0",
+    "@ionic/cli": "^7.2.1",
+    "@ionic/core": "^8.6.3",
+    "firebase": "^11.9.1"
+  }
+}
