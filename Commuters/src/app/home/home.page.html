@@ -1,0 +1,272 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      TransiTrack
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card class="greeting-card">
+    <ion-card-content class="Balance-content">
+      <div class="Balance-card">
+        <div class="Balance">
+          <h3>Your Balance</h3>
+          <h2>$1,200</h2>
+        </div>
+        <div class="Balance-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="ticket-card">
+    <ion-card-header class="ticket-header"> 
+      <ion-item>
+        <ion-card-title>Active Tickets</ion-card-title>
+      </ion-item>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="ticket-list">
+        <ion-item *ngFor="let ticket of ticket">
+          <ion-label>
+            <h2>{{ticket.name}}</h2>
+            <p>Valid until: {{ticket.validUntil}}</p>
+          </ion-label>
+        </ion-item>
+        <div>
+          <h3>Basak - IT Park</h3>
+          <p>June 10, 2023 - 9:15 AM</p>
+          <ion-badge color="info" class="status">UPCOMING</ion-badge>
+        </div>
+      </div>
+      <ion-button fill="outline" (click)="viewTicket()">View Ticket</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="quick-book-card">
+    <ion-card-header class="quick-book-header"><h1>Quick Book</h1></ion-card-header>
+    <ion-card-content>
+      <ion-select label="Select Origin" name="dropdown" expand="full" class="origin-select">
+        <ion-select-option value="route1">Route 1</ion-select-option>
+        <ion-select-option value="route2">Route 2</ion-select-option>
+        <ion-select-option value="route3">Route 3</ion-select-option>
+      </ion-select>
+
+      <ion-select label="Select Destination" name="dropdown" expand="full" class="destination-select">
+        <ion-select-option value="destination1">Destination 1</ion-select-option>
+        <ion-select-option value="destination2">Destination 2</ion-select-option>
+          <ion-select-option value="destination3">Destination 3</ion-select-option>
+        </ion-select>
+      <ion-button expand="full" class="book-now-btn">Book Now</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="discount-card">
+    <ion-card-header><h2>Discounts</h2></ion-card-header>
+    <ion-card-content>
+      <div><p>PWD Discount</p> <p class="off">10% off</p></div>
+
+      <div><p>Student Discount</p> <p class="off">15% off</p></div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>Recent Trips</ion-card-header>
+    <ion-card-content>
+      <div *ngFor="let trip of recentTrips">
+        <h3>{{ trip.route }}</h3>
+        <p>{{ trip.date }} - {{ trip.time }}</p>
+      </div>
+    </ion-card-content>
+
+  </ion-card>
+ 
+
+  <ion-card class="my-tickets-card">
+    <ion-card-header class="tickets-header">
+      <ion-card-title>My Tickets</ion-card-title>
+      
+      <div class="ticket-tabs">
+        <ion-button class="tab-btn active" fill="solid" size="small">All</ion-button>
+        <ion-button class="tab-btn" fill="clear" size="small">Upcoming</ion-button>
+        <ion-button class="tab-btn" fill="clear" size="small">Completed</ion-button>
+        <ion-button class="tab-btn" fill="clear" size="small">Cancelled</ion-button>
+      </div>
+    </ion-card-header>
+    
+    <ion-card-content class="tickets-content">
+      <!-- Ticket Item -->
+      <div class="ticket-item">
+        <div class="ticket-info">
+          <div class="ticket-route">
+            <h2>Basak to IT Park</h2>
+            <p class="ticket-date">June 10, 2023 - 09:15 AM</p>
+          </div>
+          
+          <div class="ticket-status">
+            <ion-badge color="primary">Upcoming</ion-badge>
+          </div>
+        </div>
+        
+        <div class="ticket-details">
+          <div class="detail-item">
+            <span class="detail-label">Bus Number</span>
+            <span class="detail-value">Bus 102</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Seat Number</span>
+            <span class="detail-value">12A, 12B</span>
+          </div>
+          
+          <div class="detail-item">
+            <span class="detail-label">Estimated Arrival</span>
+            <span class="detail-value">12:00 PM</span>
+          </div>
+        </div>
+        
+        <div class="ticket-actions">
+          <ion-button fill="solid" color="primary" size="small">
+            <ion-icon name="location" slot="start"></ion-icon>
+            Track Bus
+          </ion-button>
+          
+          <ion-button fill="outline" color="primary" size="small">
+            <ion-icon name="document-outline" slot="start"></ion-icon>
+            View Ticket
+          </ion-button>
+          
+          <ion-button fill="clear" color="medium" size="small">
+            <ion-icon name="share-outline" slot="start"></ion-icon>
+            Share Ticket
+          </ion-button>
+          
+          <ion-button fill="clear" color="danger" size="small">
+            <ion-icon name="close-outline" slot="start"></ion-icon>
+            Cancel Trip
+          </ion-button>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Customer Support Cards -->
+  <ion-card class="support-card">
+    <ion-card-header>
+      <ion-card-title>Customer Support</ion-card-title>
+      <ion-card-subtitle>Frequently Asked Questions</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-accordion-group>
+        <ion-accordion value="booking">
+          <ion-item slot="header" color="light">
+            <ion-label>How do I book a ticket?</ion-label>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            You can book a ticket using the Quick Book section above, or navigate to the Booking tab to see all available routes and schedules.
+          </div>
+        </ion-accordion>
+
+        <ion-accordion value="payment">
+          <ion-item slot="header" color="light">
+            <ion-label>What payment methods are accepted?</ion-label>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            We accept cash, credit/debit cards, GCash, PayMaya, and other digital wallets for convenient payment.
+          </div>
+        </ion-accordion>
+
+        <ion-accordion value="cancel">
+          <ion-item slot="header" color="light">
+            <ion-label>Can I cancel my ticket?</ion-label>
+          </ion-item>
+          <div class="ion-padding" slot="content">
+            Yes, you can cancel your ticket up to 30 minutes before departure. Cancellation fees may apply depending on the time of cancellation.
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="chat-support-card">
+    <ion-card-header>
+      <ion-card-title>Chat with Support</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="chat-intro">
+        <p><strong>Hello! I am TransiTrack's virtual assistant, how can I help you today?</strong></p>
+        <p>Here are some common questions:</p>
+      </div>
+      
+      <div class="quick-questions">
+        <ion-button fill="clear" class="question-btn" size="small">
+          How do I book a ticket?
+        </ion-button>
+        <ion-button fill="clear" class="question-btn" size="small">
+          What payment methods are accepted?
+        </ion-button>
+        <ion-button fill="clear" class="question-btn" size="small">
+          How do I apply for PWD discount?
+        </ion-button>
+        <ion-button fill="clear" class="question-btn" size="small">
+          Can I cancel my ticket?
+        </ion-button>
+      </div>
+
+      <div class="chat-input">
+        <ion-item>
+          <ion-input 
+            placeholder="Type your message..." 
+            [(ngModel)]="supportMessage">
+          </ion-input>
+          <ion-button fill="solid" slot="end" (click)="sendSupportMessage()">
+            <ion-icon name="send"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </div>
+
+      <div class="live-agent">
+        <p>Can't find what you're looking for?</p>
+        <ion-button fill="outline" (click)="connectToLiveAgent()">
+          <ion-icon name="headset-outline" slot="start"></ion-icon>
+          Connect to Live Agent
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="contact-card">
+    <ion-card-header>
+      <ion-card-title>Other Ways to Contact Us</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="contact-methods">
+        <div class="contact-item">
+          <ion-icon name="call" color="primary"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">Phone</span>
+            <span class="contact-value">1-800-hot-n-fun</span>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <ion-icon name="mail" color="primary"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">Email</span>
+            <span class="contact-value">support&#64;transittrack.com</span>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <ion-icon name="time" color="primary"></ion-icon>
+          <div class="contact-info">
+            <span class="contact-label">Hours</span>
+            <span class="contact-value">08:00 AM - 08:00 PM (Daily)</span>
+          </div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

@@ -1,0 +1,177 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="goHome()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>My Profile</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Loading profile...</p>
+  </div>
+
+  <div *ngIf="!loading" class="profile-container">
+    <div class="profile-header">
+      <ion-avatar class="profile-avatar">
+        <img alt="Profile picture" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+      </ion-avatar>
+      <div class="name-container">
+        <h1>{{student.name}} 
+          <ion-button fill="clear" size="small" (click)="editDisplayName()">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </h1>
+      </div>
+      <p class="education">{{student.school}} • {{student.grade}}</p>
+      <!-- <p class="age">Age: {{student.age}}</p> -->
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          Bio
+          <ion-button *ngIf="!bioEditMode" fill="clear" size="small" (click)="editBio()">
+            <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div *ngIf="!bioEditMode">
+          <p *ngIf="student.bio">{{student.bio}}</p>
+          <p *ngIf="!student.bio" class="empty-state">Add a bio to tell others about yourself.</p>
+        </div>
+        <div *ngIf="bioEditMode">
+          <form [formGroup]="profileForm">
+            <ion-textarea formControlName="bio" rows="4" placeholder="Tell us about yourself..."></ion-textarea>
+          </form>
+          <ion-button expand="block" (click)="saveBio()">Save Bio</ion-button>
+          <ion-button expand="block" fill="outline" (click)="cancelBioEdit()">Cancel</ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-segment value="achievements" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="achievements">
+        <ion-label>Achievements</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <div [ngSwitch]="currentSegment">
+      <div *ngSwitchCase="'achievements'">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>
+              Achievements
+              <ion-button fill="clear" size="small" (click)="addAchievement()">
+                <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
+              </ion-button>
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-list>
+              <ion-item *ngFor="let achievement of student.achievements">
+                <ion-label>
+                  <h2>{{achievement.title}}</h2>
+                  <p>{{achievement.description}}</p>
+                  <p class="date">{{achievement.date | date}}</p>
+                </ion-label>
+                <ion-button slot="end" fill="clear" (click)="removeAchievement(achievement.id || '')">
+                  <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                </ion-button>
+              </ion-item>
+              <ion-item *ngIf="student.achievements?.length === 0">
+                <ion-label class="empty-state">
+                  No achievements added yet. Add your accomplishments to showcase your progress!
+                </ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      
+      <!-- Account Settings Section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Account Settings</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="full">
+            <ion-item button (click)="confirmDeleteAccount()" color="danger">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              <ion-label>Delete Account</ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+      
+    </div>
+  </div>
+</ion-content>
+
+<style>
+  .profile-container {
+    padding: 16px;
+  }
+  
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 16px;
+  }
+  
+  .name-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .name-container h1 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .empty-state {
+    color: var(--ion-color-medium);
+    font-style: italic;
+    text-align: center;
+  }
+  
+  .skill-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .match-skills {
+    font-size: 0.9em;
+    color: var(--ion-color-medium);
+  }
+  
+  .date {
+    font-size: 0.8em;
+    color: var(--ion-color-medium);
+  }
+</style>

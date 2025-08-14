@@ -1,0 +1,58 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Schedule</ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon slot="icon-only" name="calendar"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="schedule-container">
+    <ion-segment [(ngModel)]="currentView" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="daily">
+        <ion-label>Daily</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="weekly">
+        <ion-label>Weekly</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+    
+    <div *ngIf="currentView === 'daily'" class="daily-view">
+      <ion-list>
+        <ion-item *ngFor="let schedule of dailySchedules">
+          <ion-label>
+            <h2>{{ schedule.route }}</h2>
+            <p>{{ schedule.startTime }} - {{ schedule.endTime }}</p>
+            <p>{{ schedule.startLocation }} → {{ schedule.endLocation }}</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="schedule.status === 'Active' ? 'success' : 'medium'">
+            {{ schedule.status }}
+          </ion-badge>
+        </ion-item>
+      </ion-list>
+    </div>
+    
+    <div *ngIf="currentView === 'weekly'" class="weekly-view">
+      <!-- Calendar view will go here -->
+      <p class="placeholder-message">Weekly schedule view coming soon</p>
+    </div>
+  </div>
+</ion-content>
+
+<style>
+  .schedule-container {
+    padding: 16px;
+  }
+  
+  .placeholder-message {
+    text-align: center;
+    padding: 50px 0;
+    color: var(--ion-color-medium);
+  }
+</style>

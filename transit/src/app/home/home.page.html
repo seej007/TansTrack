@@ -1,0 +1,182 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-icon name="apps-outline" class="app-logo"></ion-icon>
+    </ion-buttons>
+    <ion-title>
+      TransiTrack
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToProfile()">
+        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Greeting Card -->
+  <ion-card class="greeting-card">
+    <ion-card-content>
+      <div class="greeting-content">
+        <div class="greeting-text">
+          <h2>Good Morning, John!</h2>
+          <p>{{currentTime}} • Today is a great day to drive!</p>
+        </div>
+        <div class="greeting-icon">
+          <ion-icon name="sunny-outline"></ion-icon>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Current Schedule -->
+  <ion-card class="schedule-card">
+    <ion-card-header>
+      <ion-card-title>Current Schedule</ion-card-title>
+      <ion-badge color="success" class="status-badge">ACTIVE</ion-badge>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="schedule-info">
+        <div class="schedule-row">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{currentSchedule.time}}</span>
+        </div>
+        <div class="schedule-row">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>{{currentSchedule.route}}</span>
+        </div>
+        <div class="schedule-row">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{currentSchedule.destination}}</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Next Schedule -->
+  <ion-card class="schedule-card">
+    <ion-card-header>
+      <ion-card-title>Next Schedule</ion-card-title>
+      <ion-badge color="warning" class="status-badge">UPCOMING</ion-badge>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="schedule-info">
+        <div class="schedule-row">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{nextSchedule.time}}</span>
+        </div>
+        <div class="schedule-row">
+          <ion-icon name="bus-outline"></ion-icon>
+          <span>{{nextSchedule.route}}</span>
+        </div>
+        <div class="schedule-row">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>{{nextSchedule.destination}}</span>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Passenger Count -->
+  <ion-grid class="passenger-grid">
+    <ion-row>
+      <ion-col size="6">
+        <ion-card class="passenger-card current">
+          <ion-card-content>
+            <div class="passenger-icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="passenger-number">{{currentPassengers}}</div>
+            <div class="passenger-label">Current Passengers</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="6">
+        <ion-card class="passenger-card projected">
+          <ion-card-content>
+            <div class="passenger-icon">
+              <ion-icon name="trending-up-outline"></ion-icon>
+            </div>
+            <div class="passenger-number">{{projectedPassengers}}</div>
+            <div class="passenger-label">Projected</div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <!-- Quick Actions -->
+  <ion-card class="quick-actions-card">
+    <ion-card-header>
+      <ion-card-title>Quick Actions</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button expand="block" fill="outline" class="action-btn book-ticket">
+              <ion-icon name="ticket-outline" slot="start"></ion-icon>
+              Book Ticket
+            </ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button expand="block" fill="solid" color="success" class="action-btn start-route">
+              <ion-icon name="play-outline" slot="start"></ion-icon>
+              Start Route
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button expand="block" fill="outline" color="warning" class="action-btn report-issue">
+              <ion-icon name="warning-outline" slot="start"></ion-icon>
+              Report Issue
+            </ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button expand="block" fill="solid" color="danger" class="action-btn emergency">
+              <ion-icon name="alert-outline" slot="start"></ion-icon>
+              Emergency
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Current Route Map -->
+  <ion-card class="route-map-card">
+    <ion-card-header>
+      <ion-card-title>Current Route</ion-card-title>
+      <ion-card-subtitle>Next Stop: Main Street Station (0.5 mi)</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="route-map">
+        <app-route-map [mapId]="'home-route-map'" [height]="'220px'"></app-route-map>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Recent Notifications -->
+  <ion-card class="notifications-card">
+    <ion-card-header>
+      <div class="notifications-header">
+        <ion-card-title>Recent Notifications</ion-card-title>
+        <ion-button fill="clear" color="primary" size="small">View All</ion-button>
+      </div>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let notification of recentNotifications" lines="full">
+          <ion-icon [name]="notification.icon" [color]="notification.color" slot="start"></ion-icon>
+          <ion-label>
+            <h3>{{notification.title}}</h3>
+            <p>{{notification.message}}</p>
+            <p class="notification-time">{{notification.time}}</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

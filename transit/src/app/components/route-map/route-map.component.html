@@ -1,0 +1,73 @@
+<div class="route-map-container" [style.height]="height">
+  <div [id]="mapId" class="route-map"></div>
+  
+  <!-- Route info -->
+  <div *ngIf="currentRoute" class="route-info">
+    <div class="route-distance">
+      <ion-icon name="navigate-outline"></ion-icon>
+      <span>{{currentRoute.distance / 1000 | number:'1.1-1'}} km</span>
+    </div>
+    <div class="route-duration">
+      <ion-icon name="time-outline"></ion-icon>
+      <span>{{currentRoute.duration / 60 | number:'1.0-0'}} min</span>
+    </div>
+  </div>
+  
+  <!-- Bus route card -->
+  <div *ngIf="routeId && selectedBusRoute" class="bus-route-card">
+    <div class="card-header">
+      <h3>{{selectedBusRoute.name}}</h3>
+      <span class="operator">{{selectedBusRoute.operator}}</span>
+    </div>
+    
+    <div class="route-endpoints">
+      <div class="endpoint origin">
+        <div class="dot"></div>
+        <div class="label">From</div>
+        <div class="location">{{selectedBusRoute.origin.name}}</div>
+      </div>
+      <div class="endpoint destination">
+        <div class="dot"></div>
+        <div class="label">To</div>
+        <div class="location">{{selectedBusRoute.destination.name}}</div>
+      </div>
+    </div>
+    
+    <div class="route-details">
+      <div class="detail">
+        <ion-icon name="cash-outline"></ion-icon>
+        <span>{{selectedBusRoute.fare | currency:selectedBusRoute.currency:'symbol':'1.2-2'}}</span>
+      </div>
+      <div class="detail">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{selectedBusRoute.estimatedDuration}} min</span>
+      </div>
+      <div class="detail">
+        <ion-icon name="repeat-outline"></ion-icon>
+        <span>{{selectedBusRoute.frequency}}</span>
+      </div>
+      <div class="detail">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{selectedBusRoute.startTime}} - {{selectedBusRoute.endTime}}</span>
+      </div>
+    </div>
+    
+    <div class="timepoints-title">Timepoints</div>
+    <div class="route-timepoints">
+      <div *ngFor="let stop of getTimepoints()" class="timepoint">
+        <div class="dot"></div>
+        <div class="name">{{stop.name}}</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- GPS controls -->
+  <div *ngIf="showControls" class="gps-controls">
+    <div class="gps-button" [class.active]="mapService.isTrackingEnabled()" (click)="toggleGPSTracking()" title="Toggle GPS tracking">
+      <ion-icon [name]="mapService.isTrackingEnabled() ? 'locate' : 'location-outline'"></ion-icon>
+    </div>
+    <div *ngIf="mapService.isTrackingEnabled()" class="gps-button" [class.active]="isFollowingUser" (click)="toggleFollowUser()" title="Follow my location">
+      <ion-icon [name]="isFollowingUser ? 'navigate' : 'navigate-outline'"></ion-icon>
+    </div>
+  </div>
+</div>

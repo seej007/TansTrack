@@ -1,0 +1,429 @@
+#container {
+  text-align: center;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+
+  color: #8c8c8c;
+
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+#container a:hover {
+  text-decoration: underline;
+}
+.Balance-content {
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  color: white;
+}
+
+.Balance-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+.Balance-icon{
+  font-size: 40px;
+}
+h2 {
+  font-size: 24px;
+  margin: 15px 0;
+}
+.ticket-card {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+ion-item{
+  --background: transparent;
+  --color: #333;
+  --padding-start: 1;
+  --padding-end: 1;
+}
+.status{
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  position: absolute;
+  top: 16px;
+  right: 16px;  
+}
+.ticket-header {
+  border-radius: 10px 10px 0 0;
+  padding: 0;
+}
+.origin-select {
+  padding: 0 10px;
+  border: #333 solid 1px;
+  border-radius: 9px;
+}
+.destination-select {
+  padding: 0 10px;
+  border: #333 solid 1px;
+  margin-top: 10px;
+  border-radius: 9px;
+}
+.quick-book-header{
+  color: #333;
+  padding: 0;
+  margin: 0 0 0 13px;
+}
+// .book-now-btn{
+//   background-color: #0054e9;
+//   color: white;
+//   border: none;
+//   padding: 10px 20px;
+//   border-radius: 5px;
+//   cursor: pointer;
+// }
+.quick-book-card{
+  ion-button {
+    --background: #0054e9;
+    --color: white;
+    --border-radius: 10px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+    --fill: none;
+  }
+}
+.discount-card{
+  padding: 0;
+  border-radius: 10px;
+  margin-top: 20px;
+h2{
+  color: #333;
+}
+  div{
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    color: #333;
+  }
+  .off{
+    color: green;
+    font-weight: bold;
+    font-size: 16px;
+  }
+}
+.ticket-tabs{
+  display: flex;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 0;
+}
+.tab-btn{
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  height: 32px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  
+  &.active {
+    --background: var(--ion-color-primary);
+    --color: white;
+  }
+  
+  &:not(.active) {
+    --background: #f5f5f5;
+    --color: #666;
+  }
+}
+
+// My Tickets Card Styles
+.my-tickets-card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tickets-header {
+  padding: 16px;
+  padding-bottom: 8px;
+  
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0;
+  }
+}
+
+.tickets-content {
+  padding: 0 16px 16px 16px;
+}
+
+.ticket-item {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #f0f0f0;
+}
+
+.ticket-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.ticket-route {
+  flex: 1;
+  
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 4px 0;
+  }
+  
+  .ticket-date {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.ticket-status {
+  ion-badge {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+  }
+}
+
+.ticket-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  
+  .detail-label {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 2px;
+  }
+  
+  .detail-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+}
+
+.ticket-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+  
+  ion-button {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    height: auto;
+    font-size: 12px;
+    
+    ion-icon {
+      font-size: 16px;
+      margin-right: 4px;
+    }
+  }
+}
+.ticket-header{
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  width: 100%;
+}
+
+// Support Cards Styles
+.support-card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  ion-card-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-top: 4px;
+  }
+  
+  ion-accordion {
+    margin-bottom: 8px;
+    border-radius: 8px;
+    overflow: hidden;
+    
+    ion-item {
+      --background: #f8f9fa;
+      --color: #333;
+      font-weight: 500;
+    }
+  }
+}
+
+.chat-support-card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .chat-intro {
+    margin-bottom: 16px;
+    
+    p:first-child {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    p:last-child {
+      color: #666;
+      font-size: 14px;
+    }
+  }
+  
+  .quick-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    
+    .question-btn {
+      --color: var(--ion-color-primary);
+      text-align: left;
+      justify-content: flex-start;
+      font-size: 14px;
+      height: auto;
+      padding: 8px 12px;
+    }
+  }
+  
+  .chat-input {
+    margin-bottom: 16px;
+    
+    ion-item {
+      --background: #f8f9fa;
+      --border-radius: 8px;
+      margin-bottom: 0;
+    }
+    
+    ion-button {
+      --padding-start: 12px;
+      --padding-end: 12px;
+    }
+  }
+  
+  .live-agent {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+    
+    p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+    
+    ion-button {
+      --padding-start: 16px;
+      --padding-end: 16px;
+    }
+  }
+}
+
+.contact-card {
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
+  ion-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .contact-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    
+    ion-icon {
+      font-size: 24px;
+      min-width: 24px;
+    }
+    
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      
+      .contact-label {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 2px;
+      }
+      
+      .contact-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+      }
+    }
+  }
+}
