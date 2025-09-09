@@ -5,6 +5,7 @@ import { Environment } from './environment.interface';
 // However, ensure proper Firestore security rules are configured.
 export const environment: Environment = {
   production: true,
+  apiUrl: 'http://127.0.0.1:8000/api/v1',
   firebase: {
     apiKey: "AIzaSyBo-VDnMydyV6Ew9SHr0_XdOEBiptdYm-s",
     authDomain: "jobop-5af67.firebaseapp.com",

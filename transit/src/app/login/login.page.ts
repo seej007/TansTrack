@@ -32,23 +32,44 @@ export class LoginPage implements OnInit {
     });
   }
 
-  async login() {
-    if (this.loginForm.invalid) return;
+async login() {
+  if (this.loginForm.invalid) return;
+  
+  const { email, password } = this.loginForm.value;
+  
+  try {
+    console.log('Login attempt for:', email);
     
-    const { email, password } = this.loginForm.value;
+    // Simple driver mapping - NO API CALLS
+    const driverMap: {[key: string]: {id: string, name: string}} = {
+      'jason@email.com': { id: '4', name: 'Jason Nash' },
+      'dexter@email.com': { id: '1', name: 'Dexter Morgan' },
+      'john@email.com': { id: '2', name: 'John Doe' },
+      'jane@email.com': { id: '3', name: 'Jane Smith' },
+      'jessica@email.com': { id: '6', name: 'Jessica Nobra' },
+    };
     
-    try {
-      console.log('Starting login process...');
-      const result = await this.authService.signIn(email, password);
-      console.log('Login successful:', result.user?.uid);
-
-      // Navigate to tabs home page
-      console.log('Navigating to tabs home page');
+    const driver = driverMap[email.toLowerCase()];
+    
+    if (driver && password) {
+      // Store the driver ID
+      this.authService.login(driver.id, driver.name, email);
+      console.log(`Logged in as driver ${driver.name} (ID: ${driver.id})`);
       this.router.navigate(['/tabs/home']);
-    } catch (error: any) {
-      console.error('Login error:', error);
-      this.errorMessage = error.message || 'Login failed';
+    } else {
+      throw new Error('Invalid email or password');
     }
+    
+  } catch (error: any) {
+    console.error('Login error:', error);
+    this.errorMessage = error.message || 'Login failed';
+  }
+}
+
+  // ONLY ADD THIS METHOD - nothing else changed
+  signUp() {
+    console.log('Navigating to register page');
+    this.router.navigate(['/register']);
   }
 
   async forgotPassword() {

@@ -1,33 +1,216 @@
-ion-content {
-  --background: #f9f9f9;
+.register-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-h1 {
-  margin-top: 20px;
-  color: var(--ion-color-primary);
-  font-weight: bold;
-}
-
-ion-segment {
-  margin: 20px 0;
-}
-
-form {
-  background: white;
-  padding: 16px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-ion-note {
-  display: block;
-  margin: 5px 10px 15px;
-  font-size: 0.8rem;
-}
-
-.account-type-description {
-  margin: 10px 0 20px;
-  h4 {
-    color: var(--ion-color-secondary);
+.register-header {
+  margin-bottom: 2rem;
+  
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
   }
+  
+  h1 {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .text-muted {
+    color: #666;
+  }
+}
+
+.section-header {
+  margin: 2rem 0 1.5rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  
+  h6 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+    font-size: 1rem;
+    
+    ion-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Photo Upload Section
+.photo-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+  
+  .photo-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    border: 3px dashed #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      border-radius: 60px;
+      object-fit: cover;
+    }
+    
+    .photo-placeholder {
+      text-align: center;
+      color: #666;
+      
+      ion-icon {
+        color: #999;
+        margin-bottom: 0.5rem;
+      }
+      
+      p {
+        margin: 0;
+        font-size: 0.8rem;
+      }
+    }
+    
+    &:hover {
+      border-color: var(--ion-color-primary);
+      background-color: #f0f0f0;
+    }
+  }
+  
+  .upload-btn {
+    margin-bottom: 0.5rem;
+  }
+  
+  .photo-note {
+    font-size: 0.8rem;
+    color: #666;
+    text-align: center;
+    margin: 0;
+  }
+}
+
+// Form Items with better spacing
+ion-item {
+  margin-bottom: 1rem; // Increased spacing
+  --border-radius: 8px;
+  --background: #fafafa;
+  --border-color: #e0e0e0;
+  --color: #333;
+  
+  ion-label {
+    color: #555 !important;
+    font-weight: 500;
+  }
+  
+  ion-input, ion-textarea, ion-select {
+    --color: #333;
+    --placeholder-color: #999;
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+  }
+}
+
+// Error notes with better spacing
+ion-note {
+  margin-left: 1rem;
+  margin-bottom: 0.8rem;
+  font-size: 0.8rem;
+  display: block;
+}
+
+// Terms section
+.terms-section {
+  display: flex;
+  align-items: flex-start;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  
+  ion-checkbox {
+    margin-right: 0.8rem;
+    margin-top: 0.2rem;
+  }
+  
+  ion-label {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: #555;
+    
+    a {
+      color: var(--ion-color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Submit button
+ion-button[type="submit"] {
+  margin-top: 1.5rem;
+  height: 48px;
+  font-weight: 600;
+  
+  ion-spinner {
+    margin-right: 0.5rem;
+  }
+}
+
+// Login link
+.ion-text-center {
+  margin-top: 2rem;
+  
+  p {
+    color: #666;
+    
+    a {
+      color: var(--ion-color-primary);
+      text-decoration: none;
+      font-weight: 500;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Error message styling
+ion-text[color="danger"] {
+  margin: 1rem 0;
+  
+  p {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid #ffcdd2;
+    margin: 0;
+  }
+}
+
+// Select placeholder fix
+ion-select {
+  --placeholder-opacity: 0.7;
+}
+
+// Ensure light theme colors
+:host {
+  --ion-background-color: #ffffff;
+  --ion-text-color: #333333;
 }

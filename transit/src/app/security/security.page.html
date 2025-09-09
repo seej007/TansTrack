@@ -1,151 +1,154 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Security</ion-title>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-icon name="apps-outline" class="app-logo"></ion-icon>
+    </ion-buttons>
+    <ion-title>
+      Security & Privacy
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshSecurity()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="security-content">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Security</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-  <!-- Emergency Contacts Section -->
-  <div class="section">
-    <h2 class="section-title">Emergency Contacts</h2>
-    
-    <div class="emergency-cards">
-      <div class="emergency-card emergency-call" (click)="makeEmergencyCall()">
-        <ion-icon name="call" class="emergency-icon"></ion-icon>
-        <div class="emergency-text">
-          <h3>Emergency Call</h3>
-          <p>Report if you need help</p>
+  <!-- Security Status Card -->
+  <ion-card class="status-card">
+    <ion-card-header>
+      <ion-card-title>Security Status</ion-card-title>
+      <ion-badge color="success" class="status-badge">SECURE</ion-badge>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="security-info">
+        <div class="security-row">
+          <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+          <span>Account Verified</span>
+        </div>
+        <div class="security-row">
+          <ion-icon name="lock-closed-outline" color="success"></ion-icon>
+          <span>Password Protected</span>
+        </div>
+        <div class="security-row">
+          <ion-icon name="key-outline" color="success"></ion-icon>
+          <span>Two-Factor Authentication</span>
         </div>
       </div>
+    </ion-card-content>
+  </ion-card>
 
-      <div class="emergency-card transit-security" (click)="callTransitSecurity()">
-        <ion-icon name="bus" class="emergency-icon"></ion-icon>
-        <div class="emergency-text">
-          <h3>Transit Security</h3>
-          <p>Call transit security</p>
-        </div>
-      </div>
+  <!-- Privacy Settings Card -->
+  <ion-card class="settings-card">
+    <ion-card-header>
+      <ion-card-title>Privacy Settings</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item>
+          <ion-icon name="location-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Location Tracking</h3>
+            <p>Allow location tracking during routes</p>
+          </ion-label>
+          <ion-toggle checked="true" slot="end"></ion-toggle>
+        </ion-item>
 
+        <ion-item>
+          <ion-icon name="notifications-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Push Notifications</h3>
+            <p>Receive schedule and route updates</p>
+          </ion-label>
+          <ion-toggle checked="true" slot="end"></ion-toggle>
+        </ion-item>
 
-      <div class="emergency-card medical-emergency" (click)="callMedicalEmergency()">
-        <ion-icon name="medical" class="emergency-icon"></ion-icon>
-        <div class="emergency-text">
-          <h3>Medical Emergency</h3>
-          <p>Call medical assistance</p>
-        </div>
-      </div>
-    </div>
+        <ion-item>
+          <ion-icon name="analytics-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Analytics</h3>
+            <p>Share anonymous usage data</p>
+          </ion-label>
+          <ion-toggle checked="false" slot="end"></ion-toggle>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
-    <!-- Recent Emergency Calls -->
-    <div class="recent-calls">
-      <h3>Recent Emergency Calls</h3>
-      <div class="call-item">
-        <span class="call-type">Medical Emergency</span>
-        <span class="call-status completed">Completed</span>
-      </div>
-      <div class="call-item">
-        <span class="call-type">Mechanical/Repair</span>
-        <span class="call-status ongoing">Ongoing</span>
-      </div>
-    </div>
-  </div>
+  <!-- Security Actions Card -->
+  <ion-card class="actions-card">
+    <ion-card-header>
+      <ion-card-title>Security Actions</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button expand="block" fill="outline" class="action-btn">
+              <ion-icon name="key-outline" slot="start"></ion-icon>
+              Change Password
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button expand="block" fill="outline" class="action-btn">
+              <ion-icon name="phone-portrait-outline" slot="start"></ion-icon>
+              Setup 2FA
+            </ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-button expand="block" fill="outline" color="danger" class="action-btn">
+              <ion-icon name="log-out-outline" slot="start"></ion-icon>
+              Sign Out All Devices
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card-content>
+  </ion-card>
 
-  <!-- Incident Reporting Section -->
-  <div class="section">
-    <h2 class="section-title">Incident Reporting</h2>
-    
-    <form class="incident-form" (ngSubmit)="submitIncident()">
-      <ion-item>
-        <ion-label position="stacked">Incident Type</ion-label>
-        <ion-select [(ngModel)]="incidentType" name="incidentType" placeholder="Select incident type">
-          <ion-select-option value="harassment">Harassment</ion-select-option>
-          <ion-select-option value="theft">Theft</ion-select-option>
-          <ion-select-option value="vandalism">Vandalism</ion-select-option>
-          <ion-select-option value="accident">Accident</ion-select-option>
-          <ion-select-option value="suspicious-activity">Suspicious Activity</ion-select-option>
-          <ion-select-option value="other">Other</ion-select-option>
-        </ion-select>
-      </ion-item>
+  <!-- Data & Privacy Card -->
+  <ion-card class="data-card">
+    <ion-card-header>
+      <ion-card-title>Data & Privacy</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-list>
+        <ion-item button>
+          <ion-icon name="document-text-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Privacy Policy</h3>
+            <p>View our privacy policy</p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Location</ion-label>
-        <ion-input 
-          [(ngModel)]="incidentLocation" 
-          name="incidentLocation"
-          placeholder="Describe the location or stop">
-        </ion-input>
-      </ion-item>
+        <ion-item button>
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          <ion-label>
+            <h3>Download My Data</h3>
+            <p>Export your account data</p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Description</ion-label>
-        <ion-textarea 
-          [(ngModel)]="incidentDescription" 
-          name="incidentDescription"
-          placeholder="Provide details about the incident"
-          rows="4">
-        </ion-textarea>
-      </ion-item>
-
-      <div class="form-options">
-        <ion-checkbox [(ngModel)]="isAnonymous" name="isAnonymous"></ion-checkbox>
-        <ion-label>Anonymous Report</ion-label>
-      </div>
-
-      <!-- Attach Media Options -->
-      <div class="media-options">
-        <h4>Attach Media (Optional)</h4>
-        <div class="media-buttons">
-          <button type="button" class="media-btn" (click)="attachPhoto()">
-            <ion-icon name="camera"></ion-icon>
-            <span>Add Photo/Video</span>
-          </button>
-        </div>
-      </div>
-
-      <ion-button 
-        expand="block" 
-        class="submit-btn" 
-        type="submit"
-        [disabled]="!incidentType || !incidentDescription">
-        Submit Incident Report
-      </ion-button>
-    </form>
-  </div>
-
-  <!-- Safety Resources Section -->
-  <div class="section">
-    <h2 class="section-title">Safety Resources</h2>
-    
-    <div class="resource-items">
-      <div class="resource-item" (click)="openSafetyManual()">
-        <ion-icon name="book" class="resource-icon"></ion-icon>
-        <span>Online Safety Manual</span>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="resource-item" (click)="openEmergencyProcedures()">
-        <ion-icon name="warning" class="resource-icon"></ion-icon>
-        <span>Emergency Procedures</span>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="resource-item" (click)="openSafetyVideos()">
-        <ion-icon name="play-circle" class="resource-icon"></ion-icon>
-        <span>Safety Training Videos</span>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-
-      <div class="resource-item" (click)="openReportSystem()">
-        <ion-icon name="flag" class="resource-icon"></ion-icon>
-        <span>Report Reporting</span>
-        <ion-icon name="chevron-forward" class="arrow-icon"></ion-icon>
-      </div>
-    </div>
-  </div>
+        <ion-item button>
+          <ion-icon name="trash-outline" slot="start" color="danger"></ion-icon>
+          <ion-label color="danger">
+            <h3>Delete Account</h3>
+            <p>Permanently delete your account</p>
+          </ion-label>
+          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

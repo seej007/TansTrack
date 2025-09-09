@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
       
       // In development mode, auto-navigate to home if on login page
       if (user && !environment.production && this.router.url === '/login') {
-        this.router.navigate(['/home']);
+        this.router.navigate(['/tabs/home']); // REMOVED DUPLICATE
       }
     });
   }

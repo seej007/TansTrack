@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
 
 interface Schedule {
   time: string;
@@ -65,12 +66,13 @@ export class HomePage implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
     this.updateCurrentTime();
-    // Update time every minute
     setInterval(() => {
       this.updateCurrentTime();
     }, 60000);
@@ -85,7 +87,45 @@ export class HomePage implements OnInit {
     });
   }
 
-  navigateToProfile() {
-    this.router.navigate(['/tabs/student']);
+  async navigateToProfile() {
+    const alert = await this.alertController.create({
+      header: 'Confirm Logout',
+      message: 'Are you sure you want to logout?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Logout',
+          handler: async () => {
+            try {
+              await this.authService.performLogout();
+              
+              const toast = await this.toastController.create({
+                message: 'Successfully logged out',
+                duration: 2000,
+                color: 'success',
+                position: 'bottom'
+              });
+              await toast.present();
+              
+            } catch (error) {
+              console.error('Logout error:', error);
+              
+              const toast = await this.toastController.create({
+                message: 'Error during logout. Please try again.',
+                duration: 3000,
+                color: 'danger',
+                position: 'bottom'
+              });
+              await toast.present();
+            }
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }

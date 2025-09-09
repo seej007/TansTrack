@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController, ActionSheetController } from '@ionic/angular';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'; 
 import { Filesystem, Directory } from '@capacitor/filesystem';
+
 @Component({
   selector: 'app-security',
   templateUrl: './security.page.html',
@@ -26,6 +27,40 @@ export class SecurityPage implements OnInit {
   ngOnInit() {
     // Ensure the incident reports directory exists
     this.ensureIncidentReportsDirectory();
+  }
+
+  // Add the missing methods for the template
+  async refreshSecurity() {
+    const toast = await this.toastController.create({
+      message: 'Security settings refreshed',
+      duration: 2000,
+      color: 'success',
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
+  async doRefresh(event: any) {
+    try {
+      // Simulate refresh
+      setTimeout(() => {
+        event.target.complete();
+        this.showToast('Security settings updated', 'success');
+      }, 1000);
+    } catch (error) {
+      console.error('Error refreshing:', error);
+      event.target.complete();
+    }
+  }
+
+  async showToast(message: string, color: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 
   async makeEmergencyCall() {
@@ -117,6 +152,7 @@ export class SecurityPage implements OnInit {
     });
     await actionSheet.present();
   }
+
   async takePhoto() {
     try {
       console.log('Taking photo...');
@@ -146,9 +182,9 @@ export class SecurityPage implements OnInit {
     } catch (error) {
       console.error('Error taking photo:', error);
       const toast = await this.toastController.create({
-        // message: 'Error taking photo',
-        // duration: 2000,
-        // color: 'danger'
+        message: 'Error taking photo',
+        duration: 2000,
+        color: 'danger'
       });
       await toast.present();
     }
@@ -208,7 +244,6 @@ export class SecurityPage implements OnInit {
         allowEditing: false,
         resultType: CameraResultType.Uri,
         source: CameraSource.Camera,
-       
       });
 
       if (video.webPath) {
@@ -500,6 +535,4 @@ export class SecurityPage implements OnInit {
     console.log('Opening report system...');
     // In a real app, this would open reporting system
   }
-
-
 }
