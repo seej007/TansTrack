@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { MapPageRoutingModule } from './map-routing.module';
 import { MapPage } from './map.page';
-import { RouteMapModule } from '../components/route-map/route-map.module';
+import { RouteMapComponent } from '../components/route-map/route-map.component';
 
 @NgModule({
   imports: [
@@ -12,7 +12,7 @@ import { RouteMapModule } from '../components/route-map/route-map.module';
     FormsModule,
     IonicModule,
     MapPageRoutingModule,
-    RouteMapModule
+    RouteMapComponent 
   ],
   declarations: [MapPage]
 })

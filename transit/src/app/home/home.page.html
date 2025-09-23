@@ -20,7 +20,7 @@
     <ion-card-content>
       <div class="greeting-content">
         <div class="greeting-text">
-          <h2>Good Morning, John!</h2>
+          <h2>{{greeting}}, {{userName}}!</h2>
           <p>{{currentTime}} • Today is a great day to drive!</p>
         </div>
         <div class="greeting-icon">
@@ -30,53 +30,64 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Current Schedule -->
-  <ion-card class="schedule-card">
-    <ion-card-header>
-      <ion-card-title>Current Schedule</ion-card-title>
-      <ion-badge color="success" class="status-badge">ACTIVE</ion-badge>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="schedule-info">
-        <div class="schedule-row">
-          <ion-icon name="time-outline"></ion-icon>
-          <span>{{currentSchedule.time}}</span>
-        </div>
-        <div class="schedule-row">
-          <ion-icon name="bus-outline"></ion-icon>
-          <span>{{currentSchedule.route}}</span>
-        </div>
-        <div class="schedule-row">
-          <ion-icon name="location-outline"></ion-icon>
-          <span>{{currentSchedule.destination}}</span>
-        </div>
+<!-- Current Schedule -->
+<ion-card class="schedule-card">
+  <ion-card-header>
+    <ion-card-title>Current Schedule</ion-card-title>
+    <ion-badge color="success" class="status-badge">ACTIVE</ion-badge>
+  </ion-card-header>
+  <ion-card-content>
+    <div class="schedule-info" *ngIf="currentSchedule; else noCurrent">
+      <div class="schedule-row">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ getScheduleTime(currentSchedule) }}</span>
       </div>
-    </ion-card-content>
-  </ion-card>
+      <div class="schedule-row">
+        <ion-icon name="bus-outline"></ion-icon>
+        <span>{{ getScheduleRoute(currentSchedule) }}</span>
+      </div>
+      <div class="schedule-row">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ getScheduleDestination(currentSchedule) }}</span>
+      </div>
+    </div>
+    <ng-template #noCurrent>
+      <div class="schedule-row">
+        <span>No Current Schedule</span>
+      </div>
+    </ng-template>
+  </ion-card-content>
+</ion-card>
 
-  <!-- Next Schedule -->
-  <ion-card class="schedule-card">
-    <ion-card-header>
-      <ion-card-title>Next Schedule</ion-card-title>
-      <ion-badge color="warning" class="status-badge">UPCOMING</ion-badge>
-    </ion-card-header>
-    <ion-card-content>
-      <div class="schedule-info">
-        <div class="schedule-row">
-          <ion-icon name="time-outline"></ion-icon>
-          <span>{{nextSchedule.time}}</span>
-        </div>
-        <div class="schedule-row">
-          <ion-icon name="bus-outline"></ion-icon>
-          <span>{{nextSchedule.route}}</span>
-        </div>
-        <div class="schedule-row">
-          <ion-icon name="location-outline"></ion-icon>
-          <span>{{nextSchedule.destination}}</span>
-        </div>
+<!-- Next Schedule -->
+<ion-card class="schedule-card">
+  <ion-card-header>
+    <ion-card-title>Next Schedule</ion-card-title>
+    <ion-badge color="warning" class="status-badge">UPCOMING</ion-badge>
+  </ion-card-header>
+  <ion-card-content>
+    <div class="schedule-info" *ngIf="nextSchedule; else noNext">
+      <div class="schedule-row">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ getScheduleTime(nextSchedule) }}</span>
       </div>
-    </ion-card-content>
-  </ion-card>
+      <div class="schedule-row">
+        <ion-icon name="bus-outline"></ion-icon>
+        <span>{{ getScheduleRoute(nextSchedule) }}</span>
+      </div>
+      <div class="schedule-row">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ getScheduleDestination(nextSchedule) }}</span>
+      </div>
+      <!-- Accept button removed -->
+    </div>
+    <ng-template #noNext>
+      <div class="schedule-row">
+        <span>Waiting for the next Schedule</span>
+      </div>
+    </ng-template>
+  </ion-card-content>
+</ion-card>
 
   <!-- Passenger Count -->
   <ion-grid class="passenger-grid">

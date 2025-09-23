@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class ApiService {
   // Use the correct API URL that matches your Laravel routes
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = '/api';
 
   constructor(private http: HttpClient) {}
 
@@ -101,15 +101,15 @@ export class ApiService {
   }
 
   // Schedule actions (these call your existing ScheduleController methods)
-  acceptSchedule(scheduleId: number): Observable<any> {
-    console.log(`API: Accepting schedule ${scheduleId}`);
-    return this.http.put(`${this.apiUrl}/schedules/${scheduleId}/accept`, {}, {
-      headers: this.getHeaders()
-    }).pipe(
-      tap(response => console.log('Accept schedule response:', response)),
-      catchError(this.handleError)
-    );
-  }
+  // acceptSchedule(scheduleId: number): Observable<any> {
+  //   console.log(`API: Accepting schedule ${scheduleId}`);
+  //   return this.http.put(`${this.apiUrl}/schedules/${scheduleId}/accept`, {}, {
+  //     headers: this.getHeaders()
+  //   }).pipe(
+  //     tap(response => console.log('Accept schedule response:', response)),
+  //     catchError(this.handleError)
+  //   );
+  // }
 
   declineSchedule(scheduleId: number): Observable<any> {
     console.log(`API: Declining schedule ${scheduleId}`);
@@ -158,6 +158,19 @@ export class ApiService {
       headers: this.getHeaders()
     }).pipe(
       tap(response => console.log('Update profile response:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+  acceptSchedule(scheduleId: number) {
+    return this.http.post('/api/schedules/accept', { schedule_id: scheduleId });
+  }
+
+  post(endpoint: string, body: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${endpoint}`, body, {
+      headers: this.getHeaders()
+    }).pipe(
+      tap(response => console.log('POST response:', response)),
       catchError(this.handleError)
     );
   }

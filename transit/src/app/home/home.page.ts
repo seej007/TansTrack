@@ -1,20 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
+import { ApiService } from '../services/api.service';
 import { Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 
 interface Schedule {
-  time: string;
-  route: string;
-  destination: string;
+  id: number;
+  date: string;
+  start_time: string;
+  end_time: string;
+  status: string;
+  route?: {
+    name: string;
+    start_location: string;
+    end_location: string;
+  };
+  bus?: {
+    bus_number: string;
+    model: string;
+  };
 }
 
 interface Notification {
+  icon: string;
+  color: string;
   title: string;
   message: string;
   time: string;
-  icon: string;
-  color: string;
 }
 
 @Component({
@@ -23,24 +35,18 @@ interface Notification {
   styleUrls: ['home.page.scss'],
   standalone: false
 })
+
 export class HomePage implements OnInit {
   currentTime: string = '';
   currentPassengers: number = 24;
+  greeting: string = 'Good Morning';
   projectedPassengers: number = 38;
-  
-  currentSchedule: Schedule = {
-    time: '08:30 AM - 10:30 AM',
-    route: 'Ocean Central Station',
-    destination: 'Downtown Terminal'
-  };
-  
-  nextSchedule: Schedule = {
-    time: '11:00 AM - 12:30 PM',
-    route: 'Expo Boulevard Express',
-    destination: 'Parks Downtown Terminal'
-  };
-  
-  recentNotifications: Notification[] = [
+  userName: string = 'Driver';
+
+  currentSchedule: Schedule | null = null;
+  nextSchedule: Schedule | null = null;
+
+    recentNotifications: Notification[] = [
     {
       title: 'Schedule Update',
       message: 'Your next route has been updated to start 15 minutes early.',
@@ -66,16 +72,38 @@ export class HomePage implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private apiService: ApiService,
     private router: Router,
     private alertController: AlertController,
     private toastController: ToastController
   ) {}
 
   ngOnInit() {
+    // Set user name from AuthService
+    const user = this.authService.getCurrentUser();
+    if (user && user.name) {
+      this.userName = user.name;
+    }
+
+    this.updateGreeting();
     this.updateCurrentTime();
     setInterval(() => {
+      this.updateGreeting();
       this.updateCurrentTime();
     }, 60000);
+
+    this.loadSchedules();
+  }
+
+  updateGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      this.greeting = 'Good Morning';
+    } else if (hour < 18) {
+      this.greeting = 'Good Afternoon';
+    } else {
+      this.greeting = 'Good Evening';
+    }
   }
 
   updateCurrentTime() {
@@ -84,6 +112,88 @@ export class HomePage implements OnInit {
       hour: '2-digit', 
       minute: '2-digit',
       hour12: true 
+    });
+  }
+
+  reloadSchedules() {
+    this.loadSchedules();
+  }
+
+  loadSchedules() {
+    const driverId = Number(this.authService.getDriverId());
+    if (!driverId) return;
+
+    this.apiService.getDriverSchedules(driverId).subscribe({
+      next: (response) => {
+        if (response.success && response.schedules) {
+          const now = new Date();
+          const todayStr = now.toISOString().split('T')[0];
+          const todaySchedules: Schedule[] = response.schedules.today || [];
+          const upcomingSchedules: Schedule[] = response.schedules.upcoming || [];
+
+          // Find current schedule: today, accepted/active, and time window
+          this.currentSchedule = todaySchedules.find(s => {
+            if (s.status !== 'accepted' && s.status !== 'active') return false;
+            if (s.date !== todayStr) return false;
+            // Check time window
+            const start = new Date(`${s.date}T${s.start_time}`);
+            const end = new Date(`${s.date}T${s.end_time}`);
+            return now >= start && now < end;
+          }) || null;
+
+          // Find next schedule: today or future, scheduled/accepted, and start time > now
+          // If currentSchedule exists, nextSchedule is the next one after current
+          let allUpcoming = [
+            ...todaySchedules.filter(s => {
+              const start = new Date(`${s.date}T${s.start_time}`);
+              return start > now && (s.status === 'scheduled' || s.status === 'accepted');
+            }),
+            ...upcomingSchedules.filter(s => s.status === 'scheduled' || s.status === 'accepted')
+          ];
+          // Sort by date and start_time
+          allUpcoming = allUpcoming.sort((a, b) => {
+            const aDate = new Date(`${a.date}T${a.start_time}`);
+            const bDate = new Date(`${b.date}T${b.start_time}`);
+            return aDate.getTime() - bDate.getTime();
+          });
+          this.nextSchedule = allUpcoming.length > 0 ? allUpcoming[0] : null;
+        } else {
+          this.currentSchedule = null;
+          this.nextSchedule = null;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading schedules:', error);
+        this.currentSchedule = null;
+        this.nextSchedule = null;
+      }
+    });
+  }
+
+  getScheduleTime(schedule: Schedule | null): string {
+    if (!schedule) return '';
+    return `${this.formatTime(schedule.start_time)} - ${this.formatTime(schedule.end_time)}`;
+  }
+
+  getScheduleRoute(schedule: Schedule | null): string {
+    if (!schedule) return '';
+    return schedule.route?.name || '';
+  }
+
+  getScheduleDestination(schedule: Schedule | null): string {
+    if (!schedule) return '';
+    return schedule.route?.end_location || '';
+  }
+
+  formatTime(timeString: string): string {
+    if (!timeString) return '';
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours), parseInt(minutes));
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     });
   }
 

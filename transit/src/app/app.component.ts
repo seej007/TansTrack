@@ -27,10 +27,10 @@ export class AppComponent implements OnInit {
     this.authService.user$.subscribe(user => {
       console.log('App component detected auth state change:', user ? 'logged in' : 'logged out');
       
-      // In development mode, auto-navigate to home if on login page
-      if (user && !environment.production && this.router.url === '/login') {
-        this.router.navigate(['/tabs/home']); // REMOVED DUPLICATE
-      }
+      // // In development mode, auto-navigate to home if on login page
+      // if (user && !environment.production && this.router.url === '/login') {
+      //   this.router.navigate(['/tabs/home']); // REMOVED DUPLICATE
+      // }
     });
   }
 }

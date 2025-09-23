@@ -48,6 +48,7 @@ interface Summary {
   styleUrls: ['./schedule.page.scss'],
   standalone: false
 })
+
 export class SchedulePage implements OnInit, OnDestroy {
   schedules: Schedule[] = [];
   todaySchedules: Schedule[] = [];
@@ -154,13 +155,20 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   private updateSummary() {
-    const today = new Date().toISOString().split('T')[0];
-    
+    // Use the categorized arrays from the API response
+    const todaySchedules = this.todaySchedules || [];
+    const upcomingSchedules = this.upcomingSchedules || [];
+    const allSchedules = this.schedules || [];
+
+    // Count active and completed for today
+    const activeToday = todaySchedules.filter(s => s.status === 'active').length;
+    const completedToday = todaySchedules.filter(s => s.status === 'completed').length;
+
     this.summary = {
-      today_schedules: this.todaySchedules.length,
-      future_schedules: this.upcomingSchedules.length,
-      active_today: this.todaySchedules.filter(s => s.status === 'active').length,
-      completed_today: this.todaySchedules.filter(s => s.status === 'completed').length
+      today_schedules: todaySchedules.length,
+      future_schedules: upcomingSchedules.length,
+      active_today: activeToday,
+      completed_today: completedToday
     };
   }
 
@@ -275,10 +283,9 @@ export class SchedulePage implements OnInit, OnDestroy {
           text: 'Accept',
           handler: async () => {
             try {
-              const response = await this.apiService.acceptSchedule(schedule.id).toPromise();
-              if (response.success) {
-                schedule.status = 'accepted';
-                this.updateSummary();
+              const response = await this.apiService.post(`schedules/${schedule.id}/accept`, {}).toPromise();
+              if (response && response.success) {
+                await this.loadSchedules();
                 const toast = await this.toastController.create({
                   message: 'Schedule accepted successfully!',
                   duration: 2000,
@@ -346,8 +353,8 @@ export class SchedulePage implements OnInit, OnDestroy {
     try {
       const response = await this.apiService.startSchedule(schedule.id).toPromise();
       if (response.success) {
-        schedule.status = 'active';
-        this.updateSummary();
+        // Reload schedules after starting
+        await this.loadSchedules();
         const toast = await this.toastController.create({
           message: 'Trip started successfully!',
           duration: 2000,
@@ -370,8 +377,8 @@ export class SchedulePage implements OnInit, OnDestroy {
     try {
       const response = await this.apiService.completeSchedule(schedule.id).toPromise();
       if (response.success) {
-        schedule.status = 'completed';
-        this.updateSummary();
+        // Reload schedules after completing
+        await this.loadSchedules();
         const toast = await this.toastController.create({
           message: 'Trip completed successfully!',
           duration: 2000,
