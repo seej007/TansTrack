@@ -5,6 +5,11 @@ import { AuthService } from '../services/auth.service';
 import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
+interface RouteGeometry {
+  type: string; // e.g., "LineString"
+  coordinates: [number, number][]; // [lng, lat] pairs
+}
+
 interface Schedule {
   id: number;
   route_id: number;
@@ -24,6 +29,7 @@ interface Schedule {
     end_location: string;
     distance_km?: number;
     estimated_duration?: number;
+    geometry?: RouteGeometry; // ← ADD THIS
   };
   bus?: {
     id: number;
