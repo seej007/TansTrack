@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+import { ApiService } from '../services/api.service';
+import { firstValueFrom } from 'rxjs';
+// ...existing code...
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -22,7 +23,8 @@ export class LoginPage implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private apiService: ApiService
   ) {}
 
   ngOnInit() {
@@ -38,12 +40,10 @@ export class LoginPage implements OnInit {
     const { email, password } = this.loginForm.value;
 
     try {
-      // Call Laravel API for driver login
-      const response: any = await fetch('/api/v1/drivers/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      }).then(res => res.json());
+      // ✅ Use ApiService
+      const response = await firstValueFrom(
+        this.apiService.loginDriver({ email, password })
+      );
 
       if (response.success && response.driver) {
         this.authService.login(response.driver.id, response.driver.name, response.driver.email);
@@ -87,14 +87,10 @@ export class LoginPage implements OnInit {
             }
             
             try {
-              await this.authService.sendPasswordResetEmail(data.email);
-              const successAlert = await this.alertController.create({
-                header: 'Success',
-                message: 'Password reset email sent. Please check your inbox.',
-                buttons: ['OK']
-              });
-              await successAlert.present();
-              return true;
+              // Remove Firebase password reset logic
+              // You may want to implement your own password reset API here
+              this.errorMessage = 'Password reset is not available.';
+              return false;
             } catch (error: any) {
               this.errorMessage = error.message || 'Failed to send reset email';
               return false;

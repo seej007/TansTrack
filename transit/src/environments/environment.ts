@@ -2,7 +2,7 @@ import { Environment } from './environment.interface';
 
 export const environment: Environment = {
   production: false,
-  apiUrl: 'http://127.0.0.1:8000/api/v1', 
+  apiUrl: "https://cdb8a58cd137.ngrok-free.app/api", 
   firebase: {
     apiKey: "AIzaSyBo-VDnMydyV6Ew9SHr0_XdOEBiptdYm-s",
     authDomain: "jobop-5af67.firebaseapp.com",

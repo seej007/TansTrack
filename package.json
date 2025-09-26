@@ -16,7 +16,6 @@
     "@capacitor/android": "^7.4.3",
     "@capacitor/core": "7.4.0",
     "@ionic/cli": "^7.2.1",
-    "@ionic/core": "^8.6.3",
-    "firebase": "^11.9.1"
+    "@ionic/core": "^8.6.3"
   }
 }

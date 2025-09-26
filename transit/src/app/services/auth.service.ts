@@ -25,20 +25,21 @@ export class AuthService {
   }
 
   login(driverId: string, driverName: string, email?: string) {
-    localStorage.setItem('driverId', driverId);
-    localStorage.setItem('driverName', driverName);
-    if (email) localStorage.setItem('driverEmail', email);
-    localStorage.setItem('currentUser', JSON.stringify({
-      id: driverId,
-      name: driverName,
-      email: email
-    }));
-    this.isLoggedInSubject.next(true);
-    this.userSubject.next({
-      uid: driverId,
-      email: email,
-      displayName: driverName
-    });
+      console.log(`AuthService.login called with ID: ${driverId}, Name: ${driverName}, Email: ${email}`);
+      localStorage.setItem('driverId', driverId);
+      localStorage.setItem('driverName', driverName);
+      if (email) localStorage.setItem('driverEmail', email);
+      localStorage.setItem('currentUser', JSON.stringify({
+          id: driverId, 
+          name: driverName,
+          email: email
+      }));
+      this.isLoggedInSubject.next(true);
+      this.userSubject.next({
+          uid: driverId, 
+          email: email,
+          displayName: driverName
+      });
   }
 
   logout() {

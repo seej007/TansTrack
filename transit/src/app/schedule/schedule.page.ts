@@ -83,18 +83,17 @@ export class SchedulePage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // Get the logged-in driver ID with proper null handling
-    const driverId = this.authService.getDriverId();
-    
-    if (!driverId) {
-      console.error('No driver ID found - redirecting to login');
-      this.router.navigate(['/login']);
-      return;
-    }
-    
-    this.driverId = driverId; // Now we know it's not null
-    console.log(`Schedule page initialized for driver ID: ${this.driverId}`);
-    this.loadSchedules();
+      const driverId = this.authService.getDriverId(); // This calls localStorage.getItem('driverId')
+
+      if (!driverId) {
+          console.error('No driver ID found - redirecting to login');
+          this.router.navigate(['/login']);
+          return;
+      }
+
+      this.driverId = driverId; // Store as string
+      console.log(`Schedule page initialized for driver ID: ${this.driverId}`); // <-- ADD THIS LOG
+      this.loadSchedules(); // Passes this.driverId (string) to loadSchedules
   }
 
   ngOnDestroy() {
@@ -125,7 +124,10 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.error = '';
 
     try {
-      const driverIdNum = parseInt(this.driverId);
+        const driverIdNum = parseInt(this.driverId, 10); // Explicitly specify radix 10
+        if (isNaN(driverIdNum)) {
+             throw new Error("Invalid driver ID format");
+        }      
       console.log(`Loading schedules for logged-in driver ${driverIdNum}`);
       
       this.subscription = this.apiService.getDriverSchedules(driverIdNum).subscribe({
