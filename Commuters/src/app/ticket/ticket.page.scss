@@ -1,0 +1,221 @@
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  
+  ion-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+  }
+}
+
+.ticket-container {
+  padding: 16px;
+}
+
+.ticket-card {
+  margin: 0;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.status-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+  
+  ion-chip {
+    --background: rgba(var(--ion-color-primary-rgb), 0.1);
+    border: 2px solid var(--ion-color-primary);
+  }
+}
+
+.trip-section {
+  margin-bottom: 32px;
+  
+  h3 {
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  
+  .trip-route {
+    position: relative;
+    
+    .location-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      
+      ion-icon {
+        font-size: 1.5rem;
+      }
+      
+      div {
+        strong {
+          display: block;
+          font-size: 0.9rem;
+          color: var(--ion-color-medium);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        p {
+          margin: 4px 0 0 0;
+          font-size: 1.1rem;
+          font-weight: 500;
+        }
+      }
+    }
+    
+    .route-line {
+      position: absolute;
+      left: 12px;
+      top: 45px;
+      bottom: 45px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ion-color-success), var(--ion-color-danger));
+      border-radius: 1px;
+    }
+  }
+}
+
+.info-section {
+  margin-bottom: 32px;
+  
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    
+    .info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(var(--ion-color-light-rgb), 0.5);
+      border-radius: 8px;
+      
+      &.full-width {
+        grid-column: 1 / -1;
+      }
+      
+      ion-icon {
+        margin-top: 2px;
+        font-size: 1.2rem;
+      }
+      
+      div {
+        flex: 1;
+        
+        label {
+          display: block;
+          font-size: 0.8rem;
+          color: var(--ion-color-medium);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 2px;
+        }
+        
+        p {
+          margin: 0;
+          font-weight: 500;
+          
+          &.fare {
+            font-size: 1.2rem;
+            color: var(--ion-color-success);
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }
+}
+
+.qr-section {
+  margin-bottom: 24px;
+  text-align: center;
+  
+  h3 {
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  
+  .qr-container {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .qr-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--ion-color-medium);
+      
+      ion-icon {
+        font-size: 4rem;
+      }
+      
+      p {
+        margin: 0;
+        font-weight: 500;
+      }
+      
+      small {
+        font-size: 0.8rem;
+        color: var(--ion-color-light-shade);
+      }
+    }
+  }
+  
+  .qr-instruction {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin: 8px 0 0 0;
+  }
+}
+
+.action-buttons {
+  margin: 24px 0;
+  
+  ion-button {
+    margin-bottom: 12px;
+    --border-radius: 12px;
+    font-weight: 600;
+  }
+}
+
+ion-list {
+  background: transparent;
+  
+  ion-item {
+    --background: transparent;
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    
+    ion-label {
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 576px) {
+  .info-grid {
+    grid-template-columns: 1fr !important;
+    
+    .info-item.full-width {
+      grid-column: 1;
+    }
+  }
+}

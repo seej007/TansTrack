@@ -1,0 +1,120 @@
+ion-content {
+  --background: #f4f6f9; /* light gray background */
+  color: var(--ion-color-dark);
+}
+
+.app-logo {
+  font-size: 1.5rem;
+  color: white;
+}
+
+/* Toolbar */
+ion-toolbar {
+  --background: var(--ion-color-primary);
+  --color: #fff;
+}
+
+/* Summary Cards */
+.summary-section {
+  margin: 16px;
+}
+
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.summary-value {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: var(--ion-color-primary);
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+/* Schedule Cards */
+.schedule-card {
+  margin: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.schedule-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
+.schedule-header .bus-info {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.route-details h4,
+.notes h4 {
+  margin-top: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+.route-item,
+.fare-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0;
+  color: var(--ion-color-dark);
+}
+
+.route-item ion-icon,
+.fare-item ion-icon {
+  color: var(--ion-color-medium);
+}
+
+.notes p {
+  font-size: 0.9rem;
+  color: var(--ion-color-dark);
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state ion-icon {
+  font-size: 2rem;
+  color: var(--ion-color-medium);
+}
+
+/* Buttons alignment */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  color: var(--ion-color-medium);
+}

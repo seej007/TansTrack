@@ -1,0 +1,287 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-icon name="apps-outline" class="app-logo"></ion-icon>
+    </ion-buttons>
+    <ion-title>
+      My Schedules
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshSchedules()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- Summary Cards -->
+  <div class="summary-section" *ngIf="summary">
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-value">{{ summary.today_schedules }}</div>
+        <div class="summary-label">Today</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ summary.future_schedules }}</div>
+        <div class="summary-label">Upcoming</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ summary.active_today }}</div>
+        <div class="summary-label">Active</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-value">{{ summary.completed_today }}</div>
+        <div class="summary-label">Completed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Segment Control -->
+  <ion-segment [value]="selectedSegment" (ionChange)="onSegmentChanged($event)">
+      <ion-segment-button value="today">
+        <ion-label>Today ({{ todaySchedules.length }})</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="upcoming">
+        <ion-label>Upcoming ({{ upcomingSchedules.length }})</ion-label>
+      </ion-segment-button>
+  </ion-segment>
+
+  <!-- Refresh Control -->
+  <ion-refresher slot="fixed" (ionRefresh)="refreshSchedules($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Today's Schedules -->
+  <div *ngIf="selectedSegment === 'today'">
+    <div class="schedule-section-header">
+      
+    </div>
+    
+    <div *ngIf="todaySchedules.length === 0" class="empty-state">
+      <ion-icon name="calendar-outline" size="large"></ion-icon>
+      <h4>No schedules for today</h4>
+      <p>Check back later or view upcoming schedules</p>
+    </div>
+
+    <ion-card *ngFor="let schedule of todaySchedules" class="schedule-card">
+      <ion-card-header>
+        <div class="schedule-header">
+          <div class="route-info">
+            <h3>{{ getRouteDetails(schedule) }}</h3>
+            <p class="bus-info">{{ getBusDetails(schedule) }}</p>
+          </div>
+          <ion-chip [color]="getStatusColor(schedule.status)">
+            {{ schedule.status | titlecase }}
+          </ion-chip>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="schedule-details">
+          <div class="time-info">
+            <div class="time-slot">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ formatTime(schedule.start_time) }} - {{ formatTime(schedule.end_time) }}</span>
+            </div>
+            <div class="date-info">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDate(schedule.date) }}</span>
+            </div>
+          </div>
+
+          <!-- Route Details -->
+          <div class="route-details" *ngIf="schedule.route">
+            <h4>Route Information</h4>
+            <div class="route-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <div>
+                <strong>From:</strong> {{ schedule.route.start_location }}
+              </div>
+            </div>
+            <div class="route-item">
+              <ion-icon name="flag-outline"></ion-icon>
+              <div>
+                <strong>To:</strong> {{ schedule.route.end_location }}
+              </div>
+            </div>
+            <div class="route-item" *ngIf="schedule.route.distance_km">
+              <ion-icon name="speedometer-outline"></ion-icon>
+              <div>
+                <strong>Distance:</strong> {{ schedule.route.distance_km }} km
+              </div>
+            </div>
+            <div class="route-item" *ngIf="schedule.route.estimated_duration">
+              <ion-icon name="hourglass-outline"></ion-icon>
+              <div>
+                <strong>Duration:</strong> {{ schedule.route.estimated_duration }} minutes
+              </div>
+            </div>
+          </div>
+
+          <!-- Fare Information -->
+          <div class="fare-info">
+            <div class="fare-item">
+              <span>Regular Fare: </span>
+              <strong>₱{{ (schedule.fare_regular || 0).toFixed(2) }}</strong>
+            </div>
+            <div class="fare-item" *ngIf="schedule.bus?.is_aircon && schedule.fare_aircon">
+              <span>Air-Con Fare: </span>
+              <strong>₱{{ (schedule.fare_aircon || 0).toFixed(2) }}</strong>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="notes" *ngIf="schedule.notes">
+            <h4>Notes</h4>
+            <p>{{ schedule.notes }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button 
+            *ngIf="canAccept(schedule)" 
+            fill="solid" 
+            color="success" 
+            (click)="acceptSchedule(schedule)">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Accept
+          </ion-button>
+
+          <ion-button 
+            *ngIf="canDecline(schedule)" 
+            fill="outline" 
+            color="danger" 
+            (click)="declineSchedule(schedule)">
+            <ion-icon name="close" slot="start"></ion-icon>
+            Decline
+          </ion-button>
+
+          <ion-button 
+            *ngIf="canStart(schedule)" 
+            fill="solid" 
+            color="warning" 
+            (click)="startSchedule(schedule)">
+            <ion-icon name="play" slot="start"></ion-icon>
+            Start Trip
+          </ion-button>
+
+          <ion-button 
+            *ngIf="canComplete(schedule)" 
+            fill="solid" 
+            color="dark" 
+            (click)="completeSchedule(schedule)">
+            <ion-icon name="flag" slot="start"></ion-icon>
+            Complete
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Upcoming Schedules -->
+  <div *ngIf="selectedSegment === 'upcoming'">
+    <div class="schedule-section-header">
+      
+    </div>
+    
+    <div *ngIf="upcomingSchedules.length === 0" class="empty-state">
+      <ion-icon name="calendar-outline" size="large"></ion-icon>
+      <h4>No upcoming schedules</h4>
+      <p>Your future schedules will appear here</p>
+    </div>
+
+    <ion-card *ngFor="let schedule of upcomingSchedules" class="schedule-card">
+      <ion-card-header>
+        <div class="schedule-header">
+          <div class="route-info">
+            <h3>{{ getRouteDetails(schedule) }}</h3>
+            <p class="bus-info">{{ getBusDetails(schedule) }}</p>
+          </div>
+          <ion-chip [color]="getStatusColor(schedule.status)">
+            {{ schedule.status | titlecase }}
+          </ion-chip>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <div class="schedule-details">
+          <div class="time-info">
+            <div class="time-slot">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ formatTime(schedule.start_time) }} - {{ formatTime(schedule.end_time) }}</span>
+            </div>
+            <div class="date-info">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDate(schedule.date) }}</span>
+            </div>
+          </div>
+
+          <!-- Route Details -->
+          <div class="route-details" *ngIf="schedule.route">
+            <h4>Route Information</h4>
+            <div class="route-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <div>
+                <strong>From:</strong> {{ schedule.route.start_location }}
+              </div>
+            </div>
+            <div class="route-item">
+              <ion-icon name="flag-outline"></ion-icon>
+              <div>
+                <strong>To:</strong> {{ schedule.route.end_location }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="notes" *ngIf="schedule.notes">
+            <h4>Notes</h4>
+            <p>{{ schedule.notes }}</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <ion-button 
+            *ngIf="canAccept(schedule)" 
+            fill="solid" 
+            color="success" 
+            (click)="acceptSchedule(schedule)">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Accept
+          </ion-button>
+
+          <ion-button 
+            *ngIf="canDecline(schedule)" 
+            fill="outline" 
+            color="danger" 
+            (click)="declineSchedule(schedule)">
+            <ion-icon name="close" slot="start"></ion-icon>
+            Decline
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Loading schedules...</p>
+  </div>
+
+  <!-- <ion-card>
+    <ion-card-header>
+      <ion-card-title>Driver Selection (Testing)</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label>Current Driver ID: {{ driverId }}</ion-label>
+        <ion-button fill="outline" (click)="selectDriver()">Change Driver</ion-button>
+      </ion-item>
+    </ion-card-content>
+  </ion-card> -->
+
+</ion-content>

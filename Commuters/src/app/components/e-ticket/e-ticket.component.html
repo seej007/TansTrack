@@ -1,0 +1,20 @@
+<div *ngIf="visible" class="e-ticket-inline">
+  <ion-card class="e-ticket-card">
+    <ion-card-header>
+      <ion-card-title>e-Ticket</ion-card-title>
+      <ion-note slot="end">Issued: {{ issuedFormatted }}</ion-note>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="row"><div class="label">Destination</div><div class="value">{{destination || 'Unknown'}}</div></div>
+      <div class="row"><div class="label">Total Fare</div><div class="value">₱{{ totalFare?.toFixed(2) || '0.00' }}</div></div>
+      <div class="row"><div class="label">Payment Option</div><div class="value">{{ paymentOption }}</div></div>
+      <div class="qr-row">
+        <div class="qr-box">TICKET</div>
+        <div class="ticket-info">Reference: <strong>{{ reference }}</strong></div>
+      </div>
+    </ion-card-content>
+    <div class="e-ticket-footer" style="padding:12px;">
+      <button class="close-btn" style="width:100%; padding:12px; background:#0b63ff; color:#fff; border:none; border-radius:6px; font-weight:600;" (click)="onClose()">CLOSE</button>
+    </div>
+  </ion-card>
+</div>
