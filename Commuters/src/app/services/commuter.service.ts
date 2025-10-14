@@ -35,6 +35,7 @@ function parseStoredCoord(value: any): [number, number] | null {
 
 export interface LiveRoute {
   id: string;
+  scheduleId?: number; // NEW: Track which schedule this route belongs to
   name: string;
   basefare: number;
   pricePerKm: number;
@@ -43,6 +44,10 @@ export interface LiveRoute {
   // optional exact stored start/end coordinates (normalized to [lng, lat])
   startCoord?: [number, number] | null;
   endCoord?: [number, number] | null;
+  // NEW: Driver and bus info
+  driverName?: string;
+  busPlateNumber?: string;
+  startedAt?: string; // When driver started the trip
 }
 
 @Injectable({
@@ -81,29 +86,44 @@ export class CommuterService {
       'ngrok-skip-browser-warning': 'true'
     });
 
+    // ✅ SIMPLE: Just load all routes like before (this endpoint works and is public)
     console.log('Loading routes from:', `${this.apiUrl}/routes`);
     this.http.get<any>(`${this.apiUrl}/routes`, { headers }).subscribe({
-      next: (response) => {
-        console.log('Routes API response:', response);
-        if (response.success && response.routes) {
-          const liveRoutes: LiveRoute[] = response.routes.map((route: any) => ({
+      next: (response: any) => {
+        console.log('API response:', response);
+        // API returns {success: true, routes: [...]}
+        const routesArray = response.routes || [];
+        console.log('Routes loaded:', routesArray.length);
+        const liveRoutes: LiveRoute[] = routesArray.map((route: any) => {
+          // Parse geometry if it's a string
+          let geometry = route.geometry;
+          if (typeof geometry === 'string') {
+            try {
+              geometry = JSON.parse(geometry);
+            } catch (e) {
+              console.error('Failed to parse geometry for route:', route.name, e);
+              geometry = null;
+            }
+          }
+          
+          console.log('Route:', route.name, 'Geometry type:', geometry?.type, 'Coords:', geometry?.coordinates?.length);
+          
+          return {
             id: route.id.toString(),
             name: route.name,
             basefare: route.regular_price || 15,
             pricePerKm: Math.max((route.aircon_price - route.regular_price) / route.distance_km, 2.5) || 2.5,
-            geometry: route.geometry ? JSON.parse(route.geometry) : null,
-            distance_km: route.distance_km || null, // Include distance from backend
-            startCoord: parseStoredCoord(route.start_coordinates),
-            endCoord: parseStoredCoord(route.end_coordinates)
-          }));
-          this.routesSubject.next(liveRoutes);
-          
-          // Routes loaded successfully - no need to load buses for commuters
-        }
+            geometry: geometry,
+            distance_km: route.distance_km || null,
+            startCoord: parseStoredCoord(route.start_coordinate),
+            endCoord: parseStoredCoord(route.end_coordinate)
+          };
+        });
+        this.routesSubject.next(liveRoutes);
+        console.log('✅ Processed routes:', liveRoutes.length);
       },
       error: (error) => {
         console.error('Error loading routes:', error);
-        // Show empty state instead of fallback data
         this.routesSubject.next([]);
       }
     });

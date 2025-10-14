@@ -258,6 +258,9 @@ export class HomePage implements OnInit {
               });
               await toast.present();
               
+              // Navigate to login page
+              this.router.navigate(['/login']);
+              
             } catch (error) {
               console.error('Logout error:', error);
               

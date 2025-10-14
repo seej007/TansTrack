@@ -19,10 +19,11 @@ const routes: Routes = [
     path: 'tabs',
     loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
   },
-  {
-    path: 'security',
-    loadChildren: () => import('./security/security.module').then( m => m.SecurityPageModule)
-  },
+  // Security module removed
+  // {
+  //   path: 'security',
+  //   loadChildren: () => import('./security/security.module').then( m => m.SecurityPageModule)
+  // },
   // Add a 404 route at the end that redirects to the tabs
   {
     path: '**',
