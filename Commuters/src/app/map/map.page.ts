@@ -60,14 +60,13 @@ export class MapPage implements OnInit, OnDestroy {
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [120.9842, 14.5995], // Manila, Philippines
       zoom: 12,
-      // Disable telemetry to prevent console errors from ad blockers
       trackResize: true
     });
     
     // Disable Mapbox telemetry/analytics events
     (this.map as any)._requestManager._skuToken = '';
 
-    // Add Mapbox GeolocateControl for real-time location tracking
+    // Mapbox GeolocateControl for real-time location tracking
     const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true // Use GPS for better accuracy
@@ -86,8 +85,7 @@ export class MapPage implements OnInit, OnDestroy {
       // addBusMarkers() removed - user doesn't want bus tracking
       this.addRouteLines();
       
-      // Automatically trigger geolocation when map loads
-      // This will center the map on the user's location
+     
       geolocateControl.trigger();
     });
 
@@ -98,6 +96,28 @@ export class MapPage implements OnInit, OnDestroy {
         lng: e.coords.longitude
       };
       console.log('Commuter location updated:', this.commuterLocation);
+    });
+
+    // Handle geolocation errors (e.g., in emulator without mock location)
+    geolocateControl.on('error', (e: any) => {
+      console.warn('Geolocation error:', e.message);
+      console.log('💡 Tip: In emulator, enable mock location via Extended Controls > Location');
+      
+      // Fallback to default location (Cebu City, Philippines)
+      this.commuterLocation = {
+        lat: 10.3157,
+        lng: 123.9068
+      };
+      
+      // Center map on fallback location
+      if (this.map) {
+        this.map.flyTo({
+          center: [this.commuterLocation.lng, this.commuterLocation.lat],
+          zoom: 13
+        });
+      }
+      
+      console.log('Using fallback location (Cebu City):', this.commuterLocation);
     });
   }
 
@@ -184,14 +204,6 @@ export class MapPage implements OnInit, OnDestroy {
         marker.getElement().style.display = 'none';
       });
       
-      // Bus tracking removed - user doesn't want bus functionality
-      /*
-      this.activeBuses.forEach((bus, index) => {
-        if (bus.routeId === selectedRouteId && this.busMarkers[index]) {
-          this.busMarkers[index].getElement().style.display = 'block';
-        }
-      });
-      */
     }
 
     // Hide/show route lines

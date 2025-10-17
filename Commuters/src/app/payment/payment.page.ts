@@ -354,7 +354,7 @@ export class PaymentPage implements OnInit {
         {
           text: 'OK',
           handler: () => {
-            this.router.navigate(['/fare-calculator']);
+            this.router.navigate(['/home']);
           }
         }
       ]
@@ -380,6 +380,6 @@ export class PaymentPage implements OnInit {
   }
 
   goBack() {
-    this.router.navigate(['/fare-calculator']);
+    this.router.navigate(['/home']);
   }
 }

@@ -45,7 +45,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     // Disable Mapbox telemetry/analytics events
     (this.map as any)._requestManager._skuToken = '';
 
-    // Add geolocate control to track commuter's real-time location
+    // Add geolocate control to track user's real-time location
     const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true // Use GPS for better accuracy
@@ -57,13 +57,17 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     this.map.addControl(geolocateControl, 'top-right');
 
+    // Handle geolocation errors (e.g., in emulator)
+    geolocateControl.on('error', (e: any) => {
+      console.warn('Geolocation not available (normal in emulator):', e.message);
+      console.log('💡 Enable mock location in emulator: Extended Controls > Location');
+    });
+
     this.map.on('load', () => {
       this.mapLoaded = true;
       this.drawRoute();
-      
-      // Automatically trigger geolocation when map loads (optional)
-      // Comment out if you want users to manually click the button
-      // geolocateControl.trigger();
+      // Try to trigger geolocation (will fail gracefully in emulator)
+      geolocateControl.trigger();
     });
   }
 

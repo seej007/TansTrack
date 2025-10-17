@@ -111,7 +111,7 @@ export class CommuterService {
           return {
             id: route.id.toString(),
             name: route.name,
-            basefare: route.regular_price || 15,
+            basefare: route.regular_price,
             pricePerKm: Math.max((route.aircon_price - route.regular_price) / route.distance_km, 2.5) || 2.5,
             geometry: geometry,
             distance_km: route.distance_km || null,

@@ -11,22 +11,19 @@ const routes: Routes = [
     loadChildren: () => import('./map/map.module').then( m => m.MapPageModule)
   },
   {
-    path: 'fare-calculator',
-    loadChildren: () => import('./fare-calculator/fare-calculator.module').then( m => m.FareCalculatorPageModule)
-  },
-  {
     path: 'payment',
     loadChildren: () => import('./payment/payment.module').then( m => m.PaymentPageModule)
-  },
-  {
-    path: 'ticket',
-    loadChildren: () => import('./ticket/ticket.module').then( m => m.TicketPageModule)
   },
   {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
   },
+  {
+    path: 'profile',
+    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
+  },
+
 ];
 
 @NgModule({

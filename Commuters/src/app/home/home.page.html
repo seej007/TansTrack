@@ -3,7 +3,11 @@
     <ion-title slot="start">
       TransiTrack
     </ion-title>
-    <ion-label slot="end" class="current-time">{{currentTime}}</ion-label>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/profile" fill="clear">
+        <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -130,7 +134,7 @@
       
       <div *ngIf="selectedRoute" class="selected-route-info">
         <h4>{{selectedRoute.name}}</h4>
-        <p>Base fare: ₱{{selectedRoute.basefare}}</p>
+        <p>Total fare: ₱{{selectedRoute.basefare}}</p>
         
         <!-- Button to generate ticket -->
         <ion-button 
@@ -142,9 +146,9 @@
           Generate e-Ticket
         </ion-button>
       </div>
-    
-      <!-- Inline e-ticket shown when a route is selected -->
-      <div *ngIf="selectedRoute && showTicket" class="e-ticket-inline" style="margin-top:16px;">
+      
+      <!-- E-ticket inline -->
+      <div *ngIf="showTicket && selectedRoute" class="e-ticket-inline" style="margin-top:16px;">
         <ion-card class="ticket-card">
           <ion-card-header class="ticket-header">
             <div class="ticket-header-content">
@@ -167,14 +171,14 @@
                   <ion-icon name="location" color="success"></ion-icon>
                   <div>
                     <div class="info-label">From</div>
-                    <div class="info-value">{{ (ticketDestination && ticketDestination.split(' to ')[0]) || 'Start Point' }}</div>
+                    <div class="info-value">{{ getOrigin() }}</div>
                   </div>
                 </div>
                 <div class="info-item">
                   <ion-icon name="flag" color="danger"></ion-icon>
                   <div>
                     <div class="info-label">To</div>
-                    <div class="info-value">{{ (ticketDestination && ticketDestination.split(' to ')[1]) || 'End Point' }}</div>
+                    <div class="info-value">{{ getDestinationPoint() }}</div>
                   </div>
                 </div>
               </div>
@@ -183,8 +187,8 @@
             <!-- Fare Information -->
             <div class="ticket-section">
               <div class="fare-display">
-                <div class="fare-label">Total Fare</div>
-                <div class="fare-amount">₱{{ selectedRoute.basefare }}</div>
+                <div class="fare-label">TOTAL FARE</div>
+                <div class="fare-amount">₱{{ (selectedRoute.basefare) }}</div>
               </div>
             </div>
 
@@ -200,15 +204,15 @@
             <div class="ticket-section ticket-details">
               <div class="detail-row">
                 <span class="detail-label">Ticket ID:</span>
-                <span class="detail-value">#{{ ticketId || 'Loading...' }}</span>
+                <span class="detail-value">#{{ ticketId }}</span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Issue Date:</span>
                 <span class="detail-value">{{ currentTime }}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Route Distance:</span>
-                <span class="detail-value">{{ getRouteDistance(selectedRoute) }}</span>
+                <span class="detail-label">{{ isSimulationActive ? 'Distance Traveled:' : 'Route Distance:' }}</span>
+                <span class="detail-value">{{ isSimulationActive ? getDistanceTraveled() : getRouteDistance(selectedRoute) }}</span>
               </div>
               <div class="detail-row">
                 <span class="detail-label">Valid For:</span>
@@ -241,6 +245,16 @@
           </ion-card-content>
           
           <div class="ticket-footer">
+            <!-- Make Stop Button -->
+            <ion-button 
+              expand="block" 
+              color="danger" 
+              (click)="handleMakeStop()"
+              class="make-stop-button">
+              <ion-icon name="stop-circle-outline" slot="start"></ion-icon>
+              Make Stop
+            </ion-button>
+            
             <ion-button expand="block" color="primary" (click)="closeTicket()">
               <ion-icon name="close-circle-outline" slot="start"></ion-icon>
               Close Ticket
@@ -263,6 +277,6 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- e-Ticket is now rendered inline inside the 'All Available Routes' card -->
+  <!-- e-Ticket is now rendered inline -->
 
 </ion-content>
