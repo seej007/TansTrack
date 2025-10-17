@@ -1,0 +1,172 @@
+<ion-header [translucent]="true" color="clear">
+  <ion-toolbar color="primary">
+    <ion-title slot="start">
+      TransiTrack
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/profile" fill="clear">
+        <ion-icon name="person-circle-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Transit Tracker</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-card class="quick-book-card">
+    <ion-card-header class="quick-book-header">
+      <div class="header-icon-wrapper">
+        <ion-icon name="navigate-circle" class="header-icon"></ion-icon>
+      </div>
+      <div class="header-text">
+        <h1>Route Tracker</h1>
+        <p>Select a route to track buses in real-time</p>
+      </div>
+    </ion-card-header>
+    <ion-card-content class="quick-book-content">
+      <div class="route-selection-wrapper">
+        <div class="selection-label">
+          <ion-icon name="map-outline"></ion-icon>
+          <span>Choose Your Route</span>
+        </div>
+        <ion-select 
+          label="Select Route" 
+          name="route" 
+          expand="full" 
+          class="route-select"
+          [(ngModel)]="selectedRouteId"
+          (ionChange)="onRouteSelected()"
+          placeholder="Choose your destination"
+          interface="action-sheet">
+          <ion-select-option 
+            *ngFor="let route of routes" 
+            [value]="route.id">
+            {{route.name}}
+          </ion-select-option>
+        </ion-select>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        class="track-route-btn"
+        (click)="onTrackRoute()"
+        [disabled]="!selectedRouteId"
+        size="large">
+        <ion-icon name="location" slot="start"></ion-icon>
+        Track Route
+        <ion-icon name="arrow-forward" slot="end"></ion-icon>
+      </ion-button>
+      
+      <!-- Enhanced status indicator -->
+      <div class="route-status" *ngIf="selectedRouteId">
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span>Route Selected</span>
+        </div>
+        <div class="route-meta">
+          <ion-chip color="primary" *ngIf="selectedRoute">
+            <ion-icon name="pricetag"></ion-icon>
+            <ion-label>₱{{selectedRoute.basefare}}</ion-label>
+          </ion-chip>
+          <ion-chip color="secondary" *ngIf="selectedRoute">
+            <ion-icon name="navigate"></ion-icon>
+            <ion-label>{{getRouteDistance(selectedRoute)}}</ion-label>
+          </ion-chip>
+          <ion-chip color="success" *ngIf="selectedRoute?.geometry">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <ion-label>Map Available</ion-label>
+          </ion-chip>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Route Map Display -->
+  <ion-card *ngIf="selectedRoute" class="map-card">
+    <ion-card-header>
+      <h3>{{selectedRoute.name}}</h3>
+      <p>Real-time route tracking</p>
+      <p></p>
+    </ion-card-header>
+    <ion-card-content style="position:relative; padding:0;">
+      <div class="full-map-container">
+        <app-route-map
+          [mapId]="'home-route-map'"
+          [height]="'400px'"
+          [routeGeoJson]="selectedRoute.geometry"
+          [startCoord]="selectedRoute.startCoord"
+          [endCoord]="selectedRoute.endCoord">
+        </app-route-map>
+      </div>
+
+      <!-- Inline notice when geometry is missing -->
+      <div *ngIf="!selectedRoute.geometry" style="position:absolute; left:0; right:0; top:8px; text-align:center; color:#666; pointer-events:none;">
+        No route geometry available for this route — map shown centered.
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Available Routes Info -->
+  <ion-card *ngIf="routes.length > 0">
+    <ion-card-header>
+      <h2>All Available Routes</h2>
+      <p>Browse and select any route to track</p>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-select 
+        label="Browse All Routes" 
+        name="allRoutes" 
+        expand="full" 
+        class="all-routes-select"
+        [(ngModel)]="selectedRouteId"
+        (ionChange)="onRouteSelected()"
+        placeholder="View all available routes">
+        <ion-select-option 
+          *ngFor="let route of routes" 
+          [value]="route.id">
+          {{route.name}} - ₱{{route.basefare}}
+        </ion-select-option>
+      </ion-select>
+      
+      <div *ngIf="selectedRoute" class="selected-route-info">
+        <h4>{{selectedRoute.name}}</h4>
+        <p>Total fare: ₱{{selectedRoute.basefare}}</p>
+        
+        <!-- Button to generate ticket -->
+        <ion-button 
+          *ngIf="!showTicket" 
+          expand="block" 
+          color="success" 
+          (click)="generateTicket()">
+          <ion-icon name="ticket" slot="start"></ion-icon>
+          Generate e-Ticket
+        </ion-button>
+      </div>
+
+      <!-- E-ticket component -->
+      <app-e-ticket 
+        [visible]="showTicket"
+        [selectedRoute]="selectedRoute"
+        [ticketID]="ticketId"
+        [ticketFare]="ticketFare"
+        [currentTime]="currentTime"
+        [paymentMethod]="paymentMethod"
+        (close)="closeTicket()"
+        (share)="shareTicket()">
+      </app-e-ticket>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Loading state -->
+  <ion-card *ngIf="routes.length === 0">
+    <ion-card-content>
+      <ion-spinner></ion-spinner>
+      <p>Loading available routes...</p>
+    </ion-card-content>
+  </ion-card>
+
+</ion-content>
