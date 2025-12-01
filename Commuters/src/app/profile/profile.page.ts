@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, IonRefresher, ToastController } from '@ionic/angular';
 
 interface PaymentMethod {
   type: 'gcash' | 'paymaya' | 'card';
@@ -62,6 +62,8 @@ export class ProfilePage implements OnInit {
     localStorage.setItem('commuterProfile', JSON.stringify(this.userProfile));
     this.isEditing = false;
     this.showToast('Profile saved successfully!', 'success');
+    window.location.reload();
+    
   }
 
   addPaymentMethod() {

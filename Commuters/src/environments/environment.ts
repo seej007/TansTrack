@@ -12,10 +12,10 @@ export const environment = {
   },
   
   payment: {
-    paymaya: {
-      publicKey: 'pk-rpwb5YRGEfnKiMs1dZqY4hgpvJjuy8hhxW2bVAAiz2N',
+    paymango: {
+      publicKey: 'pk_test_m1kdK8iC26wkPEBdGTgHjGJZ',
       // Note: Secret key should be handled server-side only
-      baseUrl: 'https://pg-sandbox.paymaya.com' // Sandbox for testing
+      baseUrl: 'https://pg-sandbox.paymango.com' // Sandbox for testing
     }
   }
 };

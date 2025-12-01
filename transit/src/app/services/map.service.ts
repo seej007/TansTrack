@@ -94,91 +94,10 @@ export class MapService {
     dark: 'mapbox://styles/mapbox/dark-v10'
   };
 
-  // Sample bus routes for Cebu (would come from an API in a real app)
-  private cebuBusRoutes: BusRoute[] = [
-    {
-      id: "route-01",
-      name: "Cebu City Loop",
-      operator: "Cebu Transit Corp",
-      fare: 15.00,
-      currency: "PHP",
-      estimatedDuration: 45,
-      frequency: "Every 15 minutes",
-      startTime: "05:00 AM",
-      endTime: "10:00 PM",
-      origin: {
-        name: "Cebu South Bus Terminal",
-        coordinates: [123.8904, 10.2932]
-      },
-      destination: {
-        name: "Cebu South Bus Terminal",
-        coordinates: [123.8904, 10.2932]
-      },
-      stops: [
-        { name: "Cebu South Bus Terminal", coordinates: [123.8904, 10.2932], isTimepoint: true },
-        { name: "Cebu City Hall", coordinates: [123.9017, 10.2931] },
-        { name: "Fuente Osmeña Circle", coordinates: [123.8912, 10.3108], isTimepoint: true },
-        { name: "Ayala Center Cebu", coordinates: [123.9054, 10.3187] },
-        { name: "SM City Cebu", coordinates: [123.9154, 10.3115], isTimepoint: true },
-        { name: "Cebu IT Park", coordinates: [123.9063, 10.3307] },
-        { name: "University of San Carlos", coordinates: [123.9113, 10.3499], isTimepoint: true },
-        { name: "Cebu South Bus Terminal", coordinates: [123.8904, 10.2932], isTimepoint: true }
-      ]
-    },
-    {
-      id: "route-02",
-      name: "Mandaue Express",
-      operator: "Metro Cebu Transit",
-      fare: 20.00,
-      currency: "PHP",
-      estimatedDuration: 35,
-      frequency: "Every 20 minutes",
-      startTime: "05:30 AM",
-      endTime: "09:30 PM",
-      origin: {
-        name: "SM City Cebu",
-        coordinates: [123.9154, 10.3115]
-      },
-      destination: {
-        name: "Parkmall Mandaue",
-        coordinates: [123.9483, 10.3389]
-      },
-      stops: [
-        { name: "SM City Cebu", coordinates: [123.9154, 10.3115], isTimepoint: true },
-        { name: "Cebu Doctors' University", coordinates: [123.9196, 10.3217] },
-        { name: "Cebu International Port", coordinates: [123.9237, 10.3278], isTimepoint: true },
-        { name: "Mandaue City Hall", coordinates: [123.9402, 10.3325] },
-        { name: "Parkmall Mandaue", coordinates: [123.9483, 10.3389], isTimepoint: true }
-      ]
-    },
-    {
-      id: "route-03",
-      name: "Mactan Airport Shuttle",
-      operator: "Cebu Airport Express",
-      fare: 75.00,
-      currency: "PHP",
-      estimatedDuration: 40,
-      frequency: "Every 30 minutes",
-      startTime: "04:00 AM",
-      endTime: "11:00 PM",
-      origin: {
-        name: "Ayala Center Cebu",
-        coordinates: [123.9054, 10.3187]
-      },
-      destination: {
-        name: "Mactan-Cebu International Airport",
-        coordinates: [123.9784, 10.3144]
-      },
-      stops: [
-        { name: "Ayala Center Cebu", coordinates: [123.9054, 10.3187], isTimepoint: true },
-        { name: "SM City Cebu", coordinates: [123.9154, 10.3115] },
-        { name: "Mandaue City Center", coordinates: [123.9354, 10.3315], isTimepoint: true },
-        { name: "Marcelo Fernan Bridge", coordinates: [123.9584, 10.3216] },
-        { name: "Mactan Shrine", coordinates: [123.9684, 10.3125], isTimepoint: true },
-        { name: "Mactan-Cebu International Airport", coordinates: [123.9784, 10.3144], isTimepoint: true }
-      ]
-    }
-  ];
+  // Bus routes - will be loaded from API
+  private cebuBusRoutes: BusRoute[] = [];
+  private routesLoaded = false;
+  private apiUrl = environment.apiUrl; // Your Laravel backend URL
   
   private activeBusesSubject = new BehaviorSubject<ActiveBusInfo[]>([]);
   activeBuses$ = this.activeBusesSubject.asObservable();
@@ -190,9 +109,127 @@ export class MapService {
     console.log('MapService initialized with token:', this.mapboxToken.substring(0, 8) + '...');
     // Set token for Mapbox GL
     (mapboxgl as any).accessToken = this.mapboxToken;
+     const geolocateControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true // Use GPS for better accuracy
+      },
+      trackUserLocation: true, // Track user location continuously
+      showUserHeading: true, // Show direction the user is facing (on mobile)
+      showUserLocation: true // Show blue dot for user location
+    });
+    
+    // Load routes from API
+    this.loadRoutesFromApi();
     
     // Start bus simulation
     this.startBusSimulation();
+  }
+  
+  /**
+   * Load bus routes from Laravel API
+   */
+  private async loadRoutesFromApi(): Promise<void> {
+    try {
+      console.log('Loading routes from API:', `${this.apiUrl}/routes`);
+      const response = await fetch(`${this.apiUrl}/routes`);
+      const data = await response.json();
+      
+      // Transform API response to BusRoute format
+      if (data.success && Array.isArray(data.routes)) {
+        this.cebuBusRoutes = data.routes.map((route: any) => this.transformApiRouteToBusRoute(route));
+        this.routesLoaded = true;
+        console.log(`Loaded ${this.cebuBusRoutes.length} routes from API`);
+      } else {
+        console.error('Invalid API response format:', data);
+        this.loadMockRoutes(); // Fallback to mock data
+      }
+    } catch (error) {
+      console.error('Error loading routes from API:', error);
+      this.loadMockRoutes(); // Fallback to mock data
+    }
+  }
+  
+  /**
+   * Transform API route data to BusRoute format
+   */
+  private transformApiRouteToBusRoute(apiRoute: any): BusRoute {
+    // Parse geometry if it's a string
+    let geometry = apiRoute.geometry;
+    if (typeof geometry === 'string') {
+      try {
+        geometry = JSON.parse(geometry);
+      } catch (e) {
+        console.error('Error parsing geometry:', e);
+        geometry = null;
+      }
+    }
+    
+    // Extract stops from geometry coordinates
+    const stops = geometry && geometry.coordinates 
+      ? geometry.coordinates.map((coord: number[], index: number) => ({
+          name: index === 0 ? apiRoute.origin_name : 
+                index === geometry.coordinates.length - 1 ? apiRoute.destination_name :
+                `Stop ${index + 1}`,
+          coordinates: [coord[0], coord[1]] as [number, number],
+          isTimepoint: index === 0 || index === geometry.coordinates.length - 1
+        }))
+      : [];
+    
+    return {
+      id: `route-${apiRoute.id}`,
+      name: apiRoute.name,
+      operator: 'Cebu Transit', // Default operator
+      fare: parseFloat(apiRoute.basefare) || 0,
+      currency: 'PHP',
+      estimatedDuration: Math.round(parseFloat(apiRoute.distance) / 0.5) || 30, // Estimate: 0.5 km per minute
+      frequency: 'Every 15-20 minutes', // Default
+      startTime: '05:00 AM',
+      endTime: '10:00 PM',
+      origin: {
+        name: apiRoute.origin_name || 'Origin',
+        coordinates: stops.length > 0 ? stops[0].coordinates : [123.8854, 10.3157]
+      },
+      destination: {
+        name: apiRoute.destination_name || 'Destination',
+        coordinates: stops.length > 0 ? stops[stops.length - 1].coordinates : [123.8854, 10.3157]
+      },
+      stops: stops
+    };
+  }
+  
+  /**
+   * Load mock routes as fallback
+   */
+  private loadMockRoutes(): void {
+    console.log('Loading mock routes as fallback');
+    this.cebuBusRoutes = [
+      {
+        id: "route-01",
+        name: "Cebu City Loop",
+        operator: "Cebu Transit Corp",
+        fare: 15.00,
+        currency: "PHP",
+        estimatedDuration: 45,
+        frequency: "Every 15 minutes",
+        startTime: "05:00 AM",
+        endTime: "10:00 PM",
+        origin: {
+          name: "Cebu South Bus Terminal",
+          coordinates: [123.8904, 10.2932]
+        },
+        destination: {
+          name: "Cebu South Bus Terminal",
+          coordinates: [123.8904, 10.2932]
+        },
+        stops: [
+          { name: "Cebu South Bus Terminal", coordinates: [123.8904, 10.2932], isTimepoint: true },
+          { name: "Cebu City Hall", coordinates: [123.9017, 10.2931] },
+          { name: "SM City Cebu", coordinates: [123.9154, 10.3115], isTimepoint: true },
+          { name: "Cebu South Bus Terminal", coordinates: [123.8904, 10.2932], isTimepoint: true }
+        ]
+      }
+    ];
+    this.routesLoaded = true;
   }
 
   /**
@@ -203,7 +240,7 @@ export class MapService {
    */
   async getDirections(origin: [number, number], destination: [number, number]): Promise<MapboxRoute> {
     try {
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?geometries=geojson&access_token=${this.mapboxToken}`;
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?geometries=geojson&access_token=${this.mapboxToken}`;
       
       const response = await fetch(url);
       const data = await response.json();
@@ -241,7 +278,7 @@ export class MapService {
       }
       
       const waypointsString = waypoints.map(wp => `${wp[0]},${wp[1]}`).join(';');
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${waypointsString}?geometries=geojson&annotations=congestion,duration,distance&overview=full&access_token=${this.mapboxToken}`;
+      const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${waypointsString}?geometries=geojson&annotations=congestion,duration,distance&overview=full&access_token=${this.mapboxToken}`;
       
       const response = await fetch(url);
       const data = await response.json();
@@ -739,6 +776,42 @@ export class MapService {
    */
   getBusRoutes(): BusRoute[] {
     return [...this.cebuBusRoutes];
+  }
+  
+  /**
+   * Get all available bus routes (async - waits for API load)
+   * @returns Promise with array of bus routes
+   */
+  async getBusRoutesAsync(): Promise<BusRoute[]> {
+    // Wait for routes to be loaded if not yet loaded
+    if (!this.routesLoaded) {
+      await this.waitForRoutesLoad();
+    }
+    return [...this.cebuBusRoutes];
+  }
+  
+  /**
+   * Wait for routes to be loaded from API
+   */
+  private async waitForRoutesLoad(): Promise<void> {
+    return new Promise((resolve) => {
+      const checkInterval = setInterval(() => {
+        if (this.routesLoaded) {
+          clearInterval(checkInterval);
+          resolve();
+        }
+      }, 100);
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        if (!this.routesLoaded) {
+          console.warn('Timeout waiting for routes to load, using available routes');
+          this.loadMockRoutes();
+        }
+        resolve();
+      }, 10000);
+    });
   }
   
   /**

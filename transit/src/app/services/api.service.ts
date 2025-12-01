@@ -29,8 +29,6 @@ export class ApiService {
     if (this.apiUrl.includes('ngrok-free.dev')) {
         console.log('ApiService: Detected ngrok URL, adding skip warning header');
         headersConfig['ngrok-skip-browser-warning'] = 'true'; // Value can be anything
-        // Optional: Add User-Agent if preferred:
-        headersConfig['User-Agent'] = 'TransitTrackApp-Ionic/1.0';
     }
     // --- END NGROK BYPASS ---
 

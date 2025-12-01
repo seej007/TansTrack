@@ -90,10 +90,9 @@ export class CommuterService {
     console.log('Loading routes from:', `${this.apiUrl}/routes`);
     this.http.get<any>(`${this.apiUrl}/routes`, { headers }).subscribe({
       next: (response: any) => {
-        console.log('API response:', response);
-        // API returns {success: true, routes: [...]}
+                  console.log('API response:', response);
         const routesArray = response.routes || [];
-        console.log('Routes loaded:', routesArray.length);
+                  console.log('Routes loaded:', routesArray.length);
         const liveRoutes: LiveRoute[] = routesArray.map((route: any) => {
           // Parse geometry if it's a string
           let geometry = route.geometry;
@@ -112,7 +111,6 @@ export class CommuterService {
             id: route.id.toString(),
             name: route.name,
             basefare: route.regular_price,
-            pricePerKm: Math.max((route.aircon_price - route.regular_price) / route.distance_km, 2.5) || 2.5,
             geometry: geometry,
             distance_km: route.distance_km || null,
             startCoord: parseStoredCoord(route.start_coordinate),
@@ -146,27 +144,45 @@ export class CommuterService {
   }
 
   /**
-   * When a stored route only contains start/end coordinates (straight line),
-   * request Mapbox Directions to get a navigable LineString geometry.
-   * Expects coords as [lng, lat]
+   * Calculate fare with passenger type discount via backend API
+   * According to Philippine law (RA 9994), Students, Seniors (60+), and PWD get 20% discount
+   * @param routeId - The route ID
+   * @param passengerType - 'Regular', 'Student', 'Senior', or 'PWD'
+   * @returns Observable with fare calculation result
    */
-  getRoutedGeometryFromCoords(start: [number, number], end: [number, number]): Observable<any> {
-    // Build the Mapbox Directions URL with geojson geometry
-    const coords = `${start[0]},${start[1]};${end[0]},${end[1]}`;
-    const mbToken = environment.mapbox?.accessToken || '';
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coords}?geometries=geojson&overview=full&access_token=${encodeURIComponent(mbToken)}`;
-    return this.http.get<any>(url);
+  calculateFareWithDiscount(routeId: string, passengerType: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    });
+
+    const body = {
+      route_id: routeId,
+      passenger_type: passengerType
+    };
+
+    // Backend route is /api/v1/fare/calculate
+    return this.http.post<any>(`${this.apiUrl}/v1/fare/calculate`, body, { headers });
   }
 
-  // Calculate distance using Haversine formula
-  calculateDistance(coord1: { lat: number; lng: number }, coord2: { lat: number; lng: number }): number {
-    const R = 6371; // Earth's radius in kilometers
-    const dLat = (coord2.lat - coord1.lat) * Math.PI / 180;
-    const dLng = (coord2.lng - coord1.lng) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(coord1.lat * Math.PI / 180) * Math.cos(coord2.lat * Math.PI / 180) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+  /**
+   * Get passenger type from user profile
+   */
+  getPassengerType(): string {
+    const profile = localStorage.getItem('commuterProfile');
+    console.log('📋 Getting passenger type from localStorage:', profile);
+    if (profile) {
+      try {
+        const parsed = JSON.parse(profile);
+        console.log('✅ Parsed profile:', parsed);
+        console.log('🎭 Passenger type:', parsed.passengerType);
+        return parsed.passengerType || 'Regular';
+      } catch (e) {
+        console.error('❌ Error parsing profile:', e);
+        return 'Regular';
+      }
+    }
+    console.log('⚠️ No profile found, defaulting to Regular');
+    return 'Regular';
   }
 }

@@ -1,8 +1,10 @@
-import { Component, Input, AfterViewInit, ElementRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, AfterViewInit, ElementRef, ViewChild, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 declare var mapboxgl: any;
+import { BusSimulatorService } from '../../services/bus-simulator.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-route-map',
@@ -11,7 +13,7 @@ declare var mapboxgl: any;
   standalone: true,
   imports: [CommonModule, IonicModule]
 })
-export class RouteMapComponent implements AfterViewInit, OnChanges {
+export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() mapId: string = 'route-map';
   @Input() height: string = '220px';
   @Input() routeGeoJson: any = null; 
@@ -19,6 +21,10 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
   map: any;
   mapLoaded: boolean = false;
   routeMarkers: any[] = []; // Store markers for cleanup
+  private busSimSub: Subscription | null = null;
+  private simulatedVehicleMarker: any = null;
+
+  constructor(private busSimulatorService: BusSimulatorService) {}
 
   ngAfterViewInit() {
     mapboxgl.accessToken = 'pk.eyJ1Ijoic2Vlam83IiwiYSI6ImNtY3ZqcWJ1czBic3QycHEycnM0d2xtaXEifQ.DdQ8QFpf5LlgTDtejDgJSA';
@@ -32,6 +38,19 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
     this.map.on('load', () => {
       this.mapLoaded = true;
       this.drawRoute();
+    });
+    const geolocateControl = new mapboxgl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true // Use GPS for better accuracy
+      },
+      trackUserLocation: true, // Track user location continuously
+      showUserHeading: true, // Show direction the user is facing (on mobile)
+      showUserLocation: true // Show blue dot for user location
+    });
+
+    this.map.addControl(geolocateControl);
+    geolocateControl.on('load', () => {
+      geolocateControl.trigger();
     });
   }
 
@@ -132,6 +151,32 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
 
       // Add route markers (start, end, and waypoints)
       this.addRouteMarkers();
+
+      // Start simulated bus movement (demo) — clean previous simulation first
+      try {
+        if (this.busSimSub) { this.busSimSub.unsubscribe(); this.busSimSub = null; }
+        if (this.simulatedVehicleMarker) { try { this.simulatedVehicleMarker.remove(); } catch(e){} this.simulatedVehicleMarker = null; }
+        const coords = this.routeGeoJson.coordinates;
+        if (coords && coords.length) {
+          // create marker at first coordinate
+          this.simulatedVehicleMarker = new mapboxgl.Marker({ color: '#1E90FF' })
+            .setLngLat(coords[0])
+            .addTo(this.map);
+
+          // subscribe to simulated positions (2s interval)
+          this.busSimSub = this.busSimulatorService.simulateAlongLine(coords, 2000).subscribe(pos => {
+            try {
+              if (this.simulatedVehicleMarker && pos && pos.lng !== undefined && pos.lat !== undefined) {
+                this.simulatedVehicleMarker.setLngLat([pos.lng, pos.lat]);
+              }
+            } catch (err) {
+              console.warn('Error moving simulated vehicle marker:', err);
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('Bus simulation start failed:', e);
+      }
       
     } else {
       console.log('❌ GeoJSON validation failed - route not drawn');
@@ -198,5 +243,19 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
     }
 
     console.log(`✅ Added ${this.routeMarkers.length} total route markers`);
+  }
+
+  ngOnDestroy() {
+    if (this.busSimSub) {
+      try { this.busSimSub.unsubscribe(); } catch(e){}
+      this.busSimSub = null;
+    }
+    if (this.simulatedVehicleMarker) {
+      try { this.simulatedVehicleMarker.remove(); } catch(e){}
+      this.simulatedVehicleMarker = null;
+    }
+    // remove route markers
+    this.routeMarkers.forEach(m => { try { m.remove(); } catch(e){} });
+    this.routeMarkers = [];
   }
 }

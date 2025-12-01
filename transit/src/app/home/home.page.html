@@ -30,40 +30,11 @@
     </ion-card-content>
   </ion-card>
 
-<!-- Current Schedule -->
-<ion-card class="schedule-card">
-  <ion-card-header>
-    <ion-card-title>Current Schedule</ion-card-title>
-    <ion-badge color="success" class="status-badge">ACTIVE</ion-badge>
-  </ion-card-header>
-  <ion-card-content>
-    <div class="schedule-info" *ngIf="currentSchedule; else noCurrent">
-      <div class="schedule-row">
-        <ion-icon name="time-outline"></ion-icon>
-        <span>{{ getScheduleTime(currentSchedule) }}</span>
-      </div>
-      <div class="schedule-row">
-        <ion-icon name="bus-outline"></ion-icon>
-        <span>{{ getScheduleRoute(currentSchedule) }}</span>
-      </div>
-      <div class="schedule-row">
-        <ion-icon name="location-outline"></ion-icon>
-        <span>{{ getScheduleDestination(currentSchedule) }}</span>
-      </div>
-    </div>
-    <ng-template #noCurrent>
-      <div class="schedule-row">
-        <span>No Current Schedule</span>
-      </div>
-    </ng-template>
-  </ion-card-content>
-</ion-card>
-
 <!-- Next Schedule -->
 <ion-card class="schedule-card">
   <ion-card-header>
     <ion-card-title>Current Schedule</ion-card-title>
-    <ion-badge color="warning" class="status-badge">Active</ion-badge>
+    <ion-badge color="success" class="status-badge">Active</ion-badge>
   </ion-card-header>
   <ion-card-content>
     <div class="schedule-info" *ngIf="nextSchedule; else noNext">
@@ -160,7 +131,11 @@
   <ion-card class="route-map-card">
     <ion-card-header>
       <ion-card-title>Current Route</ion-card-title>
-      <ion-card-subtitle>Next Stop: Main Street Station (0.5 mi)</ion-card-subtitle>
+      <div class="schedule-row">
+        <ion-icon name="bus-outline"></ion-icon>
+      <ion-card-subtitle>{{ getScheduleRoute(nextSchedule) }}</ion-card-subtitle>
+      </div>
+     
     </ion-card-header>
     <ion-card-content>
       <div class="route-map">

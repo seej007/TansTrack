@@ -7,7 +7,7 @@ import { HomePage } from './home.page';
 import { RouteMapComponent } from '../components/route-map/route-map.component';
 
 import { HomePageRoutingModule } from './home-routing.module';
-
+import { ETicketComponent} from '../components/e-ticket/e-ticket.component'
 
 @NgModule({
   imports: [
@@ -16,7 +16,8 @@ import { HomePageRoutingModule } from './home-routing.module';
     IonicModule,
     HttpClientModule,
     HomePageRoutingModule,
-    RouteMapComponent
+    RouteMapComponent,
+    ETicketComponent
   ],
   declarations: [HomePage]
 })

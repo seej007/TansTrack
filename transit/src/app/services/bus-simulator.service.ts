@@ -9,7 +9,7 @@ export class BusSimulatorService {
    * @param coords Array of [lng, lat]
    * @param intervalMs milliseconds between emitted positions
    */
-  simulateAlongLine(coords: number[][], intervalMs: number = 5000): Observable<{ lng: number; lat: number; index: number; }> {
+  simulateAlongLine(coords: number[][], intervalMs: number = 10000): Observable<{ lng: number; lat: number; index: number; }> {
     const out$ = new Subject<{ lng: number; lat: number; index: number; }>();
 
     if (!coords || coords.length === 0) {

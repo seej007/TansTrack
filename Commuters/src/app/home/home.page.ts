@@ -1,8 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-// e-ticket component is standalone and used via its selector in the template
 import { ToastController, AlertController, LoadingController } from '@ionic/angular';
 import { CommuterService, LiveRoute } from '../services/commuter.service';
-import { DistanceCalculatorService } from '../services/distance-calculator.service';
 import { BusSimulatorService } from '../services/bus-simulator.service';
 import { Subscription } from 'rxjs';
 
@@ -39,7 +37,6 @@ export class HomePage implements OnInit, OnDestroy {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private commuterService: CommuterService,
-    private distanceCalculator: DistanceCalculatorService,
     private busSimulator: BusSimulatorService
   ) {}
 
@@ -67,7 +64,7 @@ export class HomePage implements OnInit, OnDestroy {
     
     this.subscriptions.push(routesSub);
   }
-  onRouteSelected() {
+  async onRouteSelected() {
     if (!this.selectedRouteId) {
       this.selectedRoute = null;
       return;
@@ -75,97 +72,72 @@ export class HomePage implements OnInit, OnDestroy {
 
     // pick from cache
     this.selectedRoute = this.routes.find(route => route.id === this.selectedRouteId) || null;
-    console.log('Selected route (initial):', this.selectedRoute);
+    console.log('Selected route:', this.selectedRoute);
 
     if (!this.selectedRoute) return;
 
-    // Show e-ticket immediately when a route is selected (demo flow)
+    // Parse geometry if it's a string
+    if (this.selectedRoute.geometry && typeof this.selectedRoute.geometry === 'string') {
+      try {
+        this.selectedRoute.geometry = JSON.parse(this.selectedRoute.geometry);
+      } catch (e) {
+        console.error('Failed to parse route geometry:', e);
+      }
+    }
+
+    // Show e-ticket immediately when a route is selected
     try {
       this.ticketDestination = this.selectedRoute.name || null;
-      this.ticketFare = this.selectedRoute.basefare; // Use fixed basefare
+      
+      // Calculate fare with passenger type discount from backend
+      const passengerType = this.commuterService.getPassengerType();
+      console.log('🎫 Calculating fare for:', {
+        routeId: this.selectedRoute.id,
+        passengerType: passengerType,
+        baseFare: this.selectedRoute.basefare
+      });
+      
+      this.commuterService.calculateFareWithDiscount(
+        this.selectedRoute.id,
+        passengerType
+      ).subscribe({
+        next: (response) => {
+          console.log('✅ Backend fare response:', response);
+          if (response.success && response.data) {
+            // Store the discounted fare from backend
+            this.ticketFare = response.data.final_fare;
+            console.log('💰 Final fare set to:', this.ticketFare);
+            
+            // Show discount info if applicable
+            if (response.data.discount_amount > 0) {
+              this.showToast(
+                `${passengerType} Discount Applied: -₱${response.data.discount_amount} (${response.data.discount_percent}%)`,
+                'success'
+              );
+            }
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error calculating fare:', error);
+          // Fallback to base fare if API fails
+          this.ticketFare = this.selectedRoute?.basefare || 0;
+          console.log('⚠️ Using fallback base fare:', this.ticketFare);
+        }
+      });
+      
       this.showTicket = true;
       
       // Start bus simulation if geometry is available
       if (this.selectedRoute.geometry?.coordinates) {
+        console.log(`✅ Route has ${this.selectedRoute.geometry.coordinates.length} waypoints`);
+        console.log(`✅ Distance: ${this.selectedRoute.distance_km} km`);
         this.startBusSimulation();
+      } else {
+        console.warn('⚠️ No geometry available for route');
       }
     } catch (e) {
       console.error('Failed to set ticket data on selection:', e);
     }
-
-    const existingGeo = this.selectedRoute.geometry || null;
-    const isGeoArray = existingGeo && Array.isArray(existingGeo.coordinates);
-    const isStartEndOnly = isGeoArray && existingGeo.coordinates.length === 2;
-    const hasNulls = isGeoArray && existingGeo.coordinates.some((c: any) => !c || c[0] === null || c[1] === null);
-
-    // If no geometry at all, fetch details from API (server might return geometry)
-    if (!existingGeo) {
-      this.commuterService.getRouteDetails(this.selectedRouteId).subscribe({
-        next: (resp) => {
-          const routeData = resp.route || resp;
-          try {
-            let geo = routeData.geometry ? (typeof routeData.geometry === 'string' ? JSON.parse(routeData.geometry) : routeData.geometry) : null;
-            if (geo && Array.isArray(geo.coordinates) && geo.coordinates.length === 2) {
-              // start/end only -> call Mapbox Directions
-              const s = geo.coordinates[0];
-              const e = geo.coordinates[geo.coordinates.length - 1];
-              const start = [parseFloat(s[0]), parseFloat(s[1])];
-              const end = [parseFloat(e[0]), parseFloat(e[1])];
-              this.commuterService.getRoutedGeometryFromCoords(start as any, end as any).subscribe({
-                next: (dirResp) => {
-                  const routed = dirResp.routes && dirResp.routes[0] && dirResp.routes[0].geometry;
-                  if (routed) {
-                    this.selectedRoute!.geometry = routed;
-                    this.selectedRoute = { ...this.selectedRoute } as LiveRoute;
-                    const idx = this.routes.findIndex(r => r.id === this.selectedRouteId);
-                    if (idx !== -1) this.routes[idx] = { ...this.routes[idx], geometry: routed } as any;
-                  }
-                },
-                error: (err) => console.error('Mapbox Directions error:', err)
-              });
-            } else {
-              // use whatever geometry the server returned
-              this.selectedRoute!.geometry = geo;
-                    this.selectedRoute = { ...this.selectedRoute } as LiveRoute;
-              const idx = this.routes.findIndex(r => r.id === this.selectedRouteId);
-              if (idx !== -1) this.routes[idx] = { ...this.routes[idx], geometry: geo } as any;
-            }
-          } catch (e) {
-            console.error('Failed to parse route geometry:', e);
-          }
-        },
-        error: (err) => console.error('Error fetching route details:', err)
-      });
-      return;
-    }
-
-    // If geometry exists but only as start/end or has null entries, request routed geometry
-    if (isStartEndOnly || hasNulls) {
-      try {
-        const s = existingGeo.coordinates[0];
-        const e = existingGeo.coordinates[existingGeo.coordinates.length - 1];
-        const start = [parseFloat(s[0]), parseFloat(s[1])];
-        const end = [parseFloat(e[0]), parseFloat(e[1])];
-        this.commuterService.getRoutedGeometryFromCoords(start as any, end as any).subscribe({
-          next: (dirResp) => {
-            const routed = dirResp.routes && dirResp.routes[0] && dirResp.routes[0].geometry;
-            if (routed) {
-              this.selectedRoute!.geometry = routed;
-              this.selectedRoute = { ...this.selectedRoute } as LiveRoute;
-              const idx = this.routes.findIndex(r => r.id === this.selectedRouteId);
-              if (idx !== -1) this.routes[idx] = { ...this.routes[idx], geometry: routed } as any;
-            }
-          },
-          error: (err) => console.error('Mapbox Directions error:', err)
-        });
-      } catch (err) {
-        console.error('Failed to request routed geometry:', err);
-      }
-      return;
-    }
-
-    // Otherwise geometry is valid and will be used directly; force change detection
-    this.selectedRoute = { ...this.selectedRoute };
   }
 
   onTrackRoute() {
@@ -178,19 +150,41 @@ export class HomePage implements OnInit, OnDestroy {
     this.showToast(`Tracking ${this.selectedRoute.name}`, 'success');
   }
 
-  // Quick pay flow for demo: pays the fixed basefare of the selected route
+  // Quick pay flow for demo: pays with passenger type discount applied
   async payFare() {
     if (!this.selectedRoute) {
       this.showToast('Select a route first', 'warning');
       return;
     }
-    const amount = this.selectedRoute.basefare; // Use fixed basefare from database
-    // Demo mode: instead of opening an external payment flow, just show the e-ticket
-    this.ticketDestination = this.selectedRoute?.name || null;
-    this.ticketFare = amount;
-    this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
-    this.showTicket = true;
-    this.showToast(`e-ticket for ${this.ticketDestination} (₱${amount.toFixed(2)})`, 'success');
+    
+    // Calculate fare with passenger type discount from backend
+    const passengerType = this.commuterService.getPassengerType();
+    
+    this.commuterService.calculateFareWithDiscount(
+      this.selectedRoute.id,
+      passengerType
+    ).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          // Demo mode: instead of opening an external payment flow, just show the e-ticket
+          this.ticketDestination = this.selectedRoute?.name || null;
+          this.ticketFare = response.data.final_fare; // Use discounted fare from backend
+          this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
+          this.showTicket = true;
+          
+          // Show appropriate message
+          let message = `e-ticket for ${this.ticketDestination} (₱${response.data.final_fare.toFixed(2)})`;
+          if (response.data.discount_amount > 0) {
+            message += ` - ${passengerType} discount applied!`;
+          }
+          this.showToast(message, 'success');
+        }
+      },
+      error: (error) => {
+        console.error('Error calculating fare:', error);
+        this.showToast('Error calculating fare', 'danger');
+      }
+    });
   }
 
   async showToast(message: string, color: string = 'primary') {
@@ -206,15 +200,43 @@ export class HomePage implements OnInit, OnDestroy {
   generateTicket() {
     if (this.selectedRoute) {
       this.ticketDestination = this.selectedRoute.name;
-      this.ticketFare = this.selectedRoute.basefare; // Use fixed basefare from database
-      this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
-      console.log('Generated Ticket ID:', this.ticketId);
-      this.showTicket = true;
       
-      // Start bus simulation for route tracking (distance display only)
-      this.startBusSimulation();
+      // Calculate fare with passenger type discount from backend
+      const passengerType = this.commuterService.getPassengerType();
       
-      this.showToast('e-Ticket generated! Fixed fare: ₱' + this.ticketFare, 'success');
+      this.commuterService.calculateFareWithDiscount(
+        this.selectedRoute.id,
+        passengerType
+      ).subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.ticketFare = response.data.final_fare; // Use discounted fare from backend
+            this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
+            console.log('Generated Ticket ID:', this.ticketId);
+            console.log('Fare Calculation:', response.data);
+            this.showTicket = true;
+            
+            // Start bus simulation for route tracking (distance display only)
+            this.startBusSimulation();
+            
+            // Show appropriate message with discount info
+            let message = `e-Ticket generated! Fare: ₱${response.data.final_fare.toFixed(2)}`;
+            if (response.data.discount_amount > 0) {
+              message += ` (${passengerType} discount: -₱${response.data.discount_amount})`;
+            }
+            this.showToast(message, 'success');
+          }
+        },
+        error: (error) => {
+          console.error('Error calculating fare:', error);
+          // Fallback to base fare if API fails
+          this.ticketFare = this.selectedRoute?.basefare || 0;
+          this.ticketId = this.generateTicketId();
+          this.showTicket = true;
+          this.startBusSimulation();
+          this.showToast('e-Ticket generated! Using base fare', 'warning');
+        }
+      });
     }
   }
 
@@ -363,17 +385,13 @@ export class HomePage implements OnInit, OnDestroy {
       return '—';
     }
     
-    // If backend already calculated distance, use it
+    // Use the distance_km from backend
     if (route.distance_km && route.distance_km > 0) {
-      return this.distanceCalculator.formatDistance(route.distance_km);
-    }
-    
-    // Otherwise calculate from geometry
-    if (route.geometry) {
-      const distance = this.distanceCalculator.calculateRouteDistance(route.geometry);
-      if (distance > 0) {
-        return this.distanceCalculator.formatDistance(distance);
+      const distance = typeof route.distance_km === 'string' ? parseFloat(route.distance_km) : route.distance_km;
+      if (distance < 1) {
+        return `${Math.round(distance * 1000)} m`;
       }
+      return `${distance.toFixed(1)} km`;
     }
     
     return '—';
@@ -426,6 +444,12 @@ export class HomePage implements OnInit, OnDestroy {
 
     // Simulate bus movement at realistic speed (updates every 2 seconds)
     // Realistic bus speed: 50 km/h ≈ 28 meters per 2 seconds
+    // Get total distance from Mapbox (already calculated and stored)
+    const totalDistance = this.selectedRoute.distance_km || 0;
+    const totalSteps = coords.length;
+    
+    console.log(`Route total distance from Mapbox: ${totalDistance} km, Total steps: ${totalSteps}`);
+
     this.busSimulationSubscription = this.busSimulator
       .simulateAlongLine(coords, 2000) // Update every 2 seconds
       .subscribe({
@@ -444,26 +468,13 @@ export class HomePage implements OnInit, OnDestroy {
             lat: Number(position.lat)
           };
 
-          // Calculate distance traveled from boarding point
-          if (this.boardingLocation && this.currentBusPosition) {
-            // Validate coordinates are valid numbers
-            const lng1 = Number(this.boardingLocation.lng);
-            const lat1 = Number(this.boardingLocation.lat);
-            const lng2 = Number(this.currentBusPosition.lng);
-            const lat2 = Number(this.currentBusPosition.lat);
-
-            console.log(`Calculating distance: (${lng1}, ${lat1}) -> (${lng2}, ${lat2})`);
-
-            if (!isNaN(lng1) && !isNaN(lat1) && !isNaN(lng2) && !isNaN(lat2)) {
-              this.distanceTraveled = this.calculateDistanceBetweenPoints(lng1, lat1, lng2, lat2);
-              
-              // Note: Fare is fixed (basefare), simulation tracks distance for display only
-              // No need to update fare dynamically
-
-              console.log(`Bus at position ${position.index}: Distance traveled = ${this.distanceTraveled.toFixed(2)} km, Fixed Fare = ₱${this.ticketFare?.toFixed(2)}`);
-            } else {
-              console.error('Invalid coordinates:', { lng1, lat1, lng2, lat2 });
-            }
+          // Calculate distance traveled based on progress along route
+          // Use Mapbox distance and interpolate based on position index
+          if (totalDistance > 0 && totalSteps > 0) {
+            const progress = position.index / totalSteps; // 0 to 1
+            this.distanceTraveled = totalDistance * progress;
+            
+            console.log(`Bus at step ${position.index}/${totalSteps}: Distance traveled = ${this.distanceTraveled.toFixed(2)} km (${(progress * 100).toFixed(1)}% of route)`);
           }
         },
         error: (err) => {
@@ -485,43 +496,7 @@ export class HomePage implements OnInit, OnDestroy {
     console.log('Bus simulation stopped');
   }
 
-  /**
-   * Calculate distance between two geographic points using Haversine formula
-   */
-  private calculateDistanceBetweenPoints(lng1: number, lat1: number, lng2: number, lat2: number): number {
-    // Validate inputs
-    if (isNaN(lng1) || isNaN(lat1) || isNaN(lng2) || isNaN(lat2)) {
-      console.error('Invalid coordinates for distance calculation:', { lng1, lat1, lng2, lat2 });
-      return 0;
-    }
 
-    const R = 6371; // Earth's radius in kilometers
-    const dLat = this.toRadians(lat2 - lat1);
-    const dLng = this.toRadians(lng2 - lng1);
-    
-    const a = 
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
-      Math.sin(dLng / 2) * Math.sin(dLng / 2);
-    
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in kilometers
-    
-    // Ensure result is valid
-    if (isNaN(distance)) {
-      console.error('Calculated distance is NaN');
-      return 0;
-    }
-    
-    return distance;
-  }
-
-  /**
-   * Convert degrees to radians
-   */
-  private toRadians(degrees: number): number {
-    return degrees * (Math.PI / 180);
-  }
 
   /**
    * Get formatted distance traveled string

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
-import { NonNullableFormBuilder } from '@angular/forms';
 
 interface Schedule {
   id: number;
@@ -43,7 +42,7 @@ export class MapPage implements OnInit {
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit() {
@@ -381,7 +380,7 @@ export class MapPage implements OnInit {
   async fetchRouteFromMapbox(startCoords: [number, number], endCoords: [number, number]) {
     const accessToken = 'pk.eyJ1Ijoic2Vlam83IiwiYSI6ImNtY3ZqcWJ1czBic3QycHEycnM0d2xtaXEifQ.DdQ8QFpf5LlgTDtejDgJSA';
     const coordsString = `${startCoords[0]},${startCoords[1]};${endCoords[0]},${endCoords[1]}`;
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&access_token=${accessToken}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${coordsString}?geometries=geojson&overview=full&access_token=${accessToken}`;
     
     console.log('🌐 Fetching route from Mapbox:', url);
     
@@ -397,15 +396,7 @@ export class MapPage implements OnInit {
         
         this.mapRouteGeoJson = routeGeometry;
         console.log('✅ Updated mapRouteGeoJson with Mapbox route');
-      } else {
-        console.warn('❌ No routes found in Mapbox response');
-        // Fallback to simple line
-        this.mapRouteGeoJson = {
-          type: 'LineString',
-          coordinates: [startCoords, endCoords]
-        };
-        console.log('Using fallback simple line geometry');
-      }
+      } 
     } catch (error) {
       console.error('❌ Error fetching route from Mapbox:', error);
       // Fallback to simple line
@@ -422,7 +413,7 @@ export class MapPage implements OnInit {
     
     // Create coordinates string for Mapbox Directions API (lng,lat;lng,lat;...)
     const coordsString = waypoints.map(coord => `${coord[0]},${coord[1]}`).join(';');
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&steps=true&access_token=${accessToken}`;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${coordsString}?geometries=geojson&overview=full&steps=true&access_token=${accessToken}`;
     
     console.log('🛣️ Fetching driving route through waypoints from Mapbox');
     console.log('Waypoints:', waypoints);
@@ -463,4 +454,6 @@ export class MapPage implements OnInit {
       console.log('Using fallback waypoint line geometry due to error');
     }
   }
+
+  
 }

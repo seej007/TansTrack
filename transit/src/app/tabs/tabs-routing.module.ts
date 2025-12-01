@@ -19,11 +19,6 @@ const routes: Routes = [
         path: 'routes',
         loadChildren: () => import('../map/map.module').then(m => m.MapPageModule)
       },
-      // Security module removed - not needed
-      // {
-      //   path: 'security',
-      //   loadChildren: () => import('../security/security.module').then(m => m.SecurityPageModule)
-      // },
       {
         path: '',
         redirectTo: 'home',

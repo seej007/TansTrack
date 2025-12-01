@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
 
   async ngOnInit() {
     // Subscribe to auth state changes for app-wide auth handling
-    this.authService.user$.subscribe(user => {
+    this.authService.user$.subscribe((user: any) => {
       console.log('App component detected auth state change:', user ? 'logged in' : 'logged out');
       
       // // In development mode, auto-navigate to home if on login page

@@ -17,8 +17,6 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() mapId: string = 'route-map';
   @Input() height: string = '220px';
   @Input() routeGeoJson: any = null; 
-  // optional exact stored start/end coords (prefer these for marker placement)
-  // allow undefined from template bindings; component treats null/undefined the same
   @Input() startCoord: [number, number] | null | undefined = null;
   @Input() endCoord: [number, number] | null | undefined = null;
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef;
