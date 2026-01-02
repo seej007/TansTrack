@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   // Use ngrok for development (works from anywhere)
-  apiUrl: 'https://semitextural-hyun-overpolemically.ngrok-free.dev/api',
+  apiUrl: 'https://8a7fa3e41c76.ngrok-free.app/api',
   // apiUrl: 'http://192.168.1.2:8000/api/v1', // Use local IP only if on same WiFi
   mapbox: {
     accessToken: 'pk.eyJ1Ijoic2Vlam83IiwiYSI6ImNtY3ZqcWJ1czBic3QycHEycnM0d2xtaXEifQ.DdQ8QFpf5LlgTDtejDgJSA'

@@ -147,6 +147,22 @@
       <ion-note color="danger" *ngIf="registerForm.get('emergency_contact')?.touched && registerForm.get('emergency_contact')?.hasError('required')">
         Emergency contact number is required
       </ion-note>
+      
+      <!-- Company Selection -->
+      <div class="section-header">
+        <h6><ion-icon name="business-outline"></ion-icon> Select Company</h6>
+      </div>
+      <ion-item>
+        <ion-label position="floating">Bus Operator *</ion-label>
+        <ion-select formControlName="user_id" placeholder="Choose company">
+          <ion-select-option *ngFor="let op of busOperators" [value]="op.id">
+            {{ op.company_name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-note color="danger" *ngIf="registerForm.get('user_id')?.hasError('required')">
+        Please select a company
+      </ion-note>
 
       <!-- Password Section -->
       <div class="section-header">

@@ -8,31 +8,24 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ApiService {
-  private apiUrl = 'https://semitextural-hyun-overpolemically.ngrok-free.dev/api';
-
+  private apiUrl: string;
 
   constructor(private http: HttpClient) {
+    this.apiUrl = environment.apiUrl; 
     console.log('ApiService initialized with apiUrl:', this.apiUrl);
   }
 
   // Simple headers - no CORS headers (browser handles this)
   private getHeaders(): HttpHeaders {
     let headersConfig: { [name: string]: string | string[] } = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     };
 
-    // --- ALWAYS ADD NGROK BYPASS HEADER IF THE URL IS NGROK ---
-    // This ensures it works whether you use ngrok or local IP from environment.ts
-    // Check the apiUrl property of this service, not environment.apiUrl directly,
-    // because this.apiUrl is what gets initialized from environment.apiUrl.
-    if (this.apiUrl.includes('ngrok-free.dev')) {
-        console.log('ApiService: Detected ngrok URL, adding skip warning header');
-        headersConfig['ngrok-skip-browser-warning'] = 'true'; // Value can be anything
-        // Optional: Add User-Agent if preferred:
-        headersConfig['User-Agent'] = 'TransitTrackApp-Ionic/1.0';
+    if (this.apiUrl.includes('ngrok-free.app')) {
+      console.log('ApiService: Detected ngrok URL, adding skip warning header');
+      headersConfig['ngrok-skip-browser-warning'] = 'true';
     }
-    // --- END NGROK BYPASS ---
 
     console.log('ApiService: Headers config:', headersConfig);
     return new HttpHeaders(headersConfig);

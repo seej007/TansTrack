@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LoadingController, ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../services/auth.service';
 import { ApiService } from '../services/api.service';
+import { environment } from '../../environments/environment';
 
 // Custom validator for password confirmation
 function passwordMatchValidator(control: AbstractControl) {
@@ -32,6 +33,7 @@ export class RegisterPage implements OnInit {
   isSubmitting = false;
   selectedPhoto: string | null = null;
   selectedPhotoFile: File | null = null;
+  busOperators: any[] = []; 
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,6 +52,7 @@ export class RegisterPage implements OnInit {
       date_of_birth: ['', Validators.required],
       gender: ['', Validators.required],
       address: ['', [Validators.required, Validators.minLength(10)]],
+      user_id: ['', Validators.required],
       
       // License Information
       license_number: ['', [Validators.required, Validators.minLength(5)]],
@@ -69,11 +72,28 @@ export class RegisterPage implements OnInit {
     }, { validators: passwordMatchValidator });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     // Check if already logged in
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/tabs/home']);
     }
+    
+    // Fetch bus operators
+    console.log('Fetching bus operators...');
+    this.apiService.get('v1/bus-operators').subscribe({
+      next: (response) => {
+        console.log('Bus operators response:', response);
+        this.busOperators = response;
+        
+        if (this.busOperators.length === 0) {
+          this.showToast('No active bus operators found', 'warning');
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching bus operators:', error);
+        this.showToast('Failed to load bus operators', 'danger');
+      }
+    });
   }
 
   selectPhoto() {
@@ -164,6 +184,7 @@ export class RegisterPage implements OnInit {
         emergency_name: this.registerForm.value.emergency_name,
         emergency_relation: this.registerForm.value.emergency_relation,
         emergency_contact: this.registerForm.value.emergency_contact,
+        user_id: this.registerForm.value.user_id,
         photo_base64: photoBase64
       };
 
