@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "io.ionic.starter"
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdk 36
     defaultConfig {
         applicationId "io.ionic.starter"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 26
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -25,9 +25,8 @@ android {
 }
 
 repositories {
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
-    }
+   google()
+    mavenCentral()
 }
 
 dependencies {

@@ -47,29 +47,12 @@ export class BusSimulatorService {
       const a = points[i];
       const b = points[i + 1];
       
-      // Calculate actual distance in kilometers using Haversine formula
-      const R = 6371; // Earth's radius in km
-      const dLat = (b.lat - a.lat) * Math.PI / 180;
-      const dLng = (b.lng - a.lng) * Math.PI / 180;
-      const lat1Rad = a.lat * Math.PI / 180;
-      const lat2Rad = b.lat * Math.PI / 180;
+      // Simple interpolation: use fixed number of steps between points
+      // This creates smooth animation without complex distance calculations
+      // Mapbox geometry already provides well-distributed waypoints along actual roads
+      const n = 5; // Fixed 5 interpolation steps between each waypoint
       
-      const haversineA = 
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1Rad) * Math.cos(lat2Rad) *
-        Math.sin(dLng / 2) * Math.sin(dLng / 2);
-      
-      const c = 2 * Math.atan2(Math.sqrt(haversineA), Math.sqrt(1 - haversineA));
-      const distanceKm = R * c;
-      
-      // Realistic bus speed: 50 km/h = 0.0139 km/sec
-      // Update interval: 2 seconds
-      // Distance per update: 0.0278 km (~28 meters)
-      // Number of steps = total distance / distance per step
-      const distancePerStep = 0.0278; // ~28 meters per 2-second update
-      const n = Math.max(5, Math.ceil(distanceKm / distancePerStep));
-      
-      console.log(`Segment ${i}: Distance = ${distanceKm.toFixed(2)} km, Steps = ${n}`);
+      console.log(`Segment ${i}: Adding ${n} interpolation steps`);
       
       const seg = interpolate(a, b, n);
       // drop last to avoid duplicates between segments

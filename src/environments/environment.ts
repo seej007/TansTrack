@@ -7,15 +7,16 @@ export const environment = {
   // Use ngrok for development (works from anywhere)
   apiUrl: 'https://semitextural-hyun-overpolemically.ngrok-free.dev/api',
   // apiUrl: 'http://192.168.1.2:8000/api/v1', // Use local IP only if on same WiFi
+  ocrApiKey: 'K87693276688957',
   mapbox: {
     accessToken: 'pk.eyJ1Ijoic2Vlam83IiwiYSI6ImNtY3ZqcWJ1czBic3QycHEycnM0d2xtaXEifQ.DdQ8QFpf5LlgTDtejDgJSA'
   },
   
   payment: {
-    paymaya: {
-      publicKey: 'pk-rpwb5YRGEfnKiMs1dZqY4hgpvJjuy8hhxW2bVAAiz2N',
+    paymango: {
+      publicKey: 'pk_test_m1kdK8iC26wkPEBdGTgHjGJZ',
       // Note: Secret key should be handled server-side only
-      baseUrl: 'https://pg-sandbox.paymaya.com' // Sandbox for testing
+      baseUrl: 'https://pg-sandbox.paymango.com' // Sandbox for testing
     }
   }
 };

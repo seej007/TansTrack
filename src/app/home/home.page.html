@@ -70,7 +70,7 @@
         <div class="route-meta">
           <ion-chip color="primary" *ngIf="selectedRoute">
             <ion-icon name="pricetag"></ion-icon>
-            <ion-label>₱{{selectedRoute.basefare}}</ion-label>
+            <ion-label>₱{{ticketFare || selectedRoute.basefare}}</ion-label>
           </ion-chip>
           <ion-chip color="secondary" *ngIf="selectedRoute">
             <ion-icon name="navigate"></ion-icon>
@@ -134,7 +134,7 @@
       
       <div *ngIf="selectedRoute" class="selected-route-info">
         <h4>{{selectedRoute.name}}</h4>
-        <p>Total fare: ₱{{selectedRoute.basefare}}</p>
+        <p>Total fare: ₱{{ticketFare || selectedRoute.basefare}}</p>
         
         <!-- Button to generate ticket -->
         <ion-button 

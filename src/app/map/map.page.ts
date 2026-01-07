@@ -58,7 +58,7 @@ export class MapPage implements OnInit, OnDestroy {
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/streets-v11',
-      center: [120.9842, 14.5995], // Manila, Philippines
+      center: [123.920994, 10.311008], // Cebu North Bus Terminal (SM City)
       zoom: 12,
       trackResize: true
     });
