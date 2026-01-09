@@ -1,99 +1,165 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-interface PaymentRequest {
-  amount: number;
-  currency: string;
-  description: string;
-  buyer: {
-    email: string;
-    phone: string;
-  };
-  metadata?: any;
-}
-
-interface PaymentResponse {
-  success: boolean;
-  data?: any;
-  message?: string;
-}
-
-interface ReservationData {
-  origin: string;
-  destination: string;
-  passengerType: string;
-  fare: number;
-  discount: number;
-  finalAmount: number;
-  paymentMethod: string;
-  status: string;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
-  
-  // Payment API Configuration - frontend should call backend endpoints
-  private readonly PAYMENT_CONFIG = {
-    // backend base URL (the Laravel API)
-    baseUrl: environment.apiUrl || ''
-  };
-  private readonly PAYMANGO = environment.payment?.paymango || null;
+  private apiUrl = `${environment.apiUrl}/payments`;
 
-  constructor(private http: HttpClient) {}
-
- 
+  constructor(private http: HttpClient) { }
 
   /**
-   * Generate reference number
+   * Process payment via PayMaya
+   * @param paymentRequest - Payment request object with amount, token, metadata
+   * @returns Promise with payment result
    */
-  private generateReferenceNumber(): string {
-    const timestamp = Date.now().toString();
-    const random = Math.random().toString(36).substring(2, 8).toUpperCase();
-    return `BUS${timestamp.slice(-8)}${random}`;
+  async processPayMayaPayment(paymentRequest: any): Promise<any> {
+    try {
+      // Mock implementation for demo - replace with actual API call
+      console.log('Processing PayMaya payment:', paymentRequest);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock successful response
+      return {
+        success: true,
+        data: {
+          id: 'pay_' + Date.now(),
+          status: 'completed',
+          amount: paymentRequest.amount,
+          currency: paymentRequest.currency,
+          transactionId: 'txn_' + Date.now()
+        },
+        message: 'Payment processed successfully'
+      };
+      
+      // TODO: Replace with actual PayMaya API call
+      // const response = await firstValueFrom(
+      //   this.http.post(`${this.apiUrl}/paymaya`, paymentRequest)
+      // );
+      // return response;
+      
+    } catch (error) {
+      console.error('PayMaya payment failed:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Payment processing failed'
+      };
+    }
   }
 
   /**
-   * Generate payment ID
+   * Create cash payment reservation
+   * @param reservationData - Reservation data with amount, userId, routeId, etc.
+   * @returns Promise with reservation result
    */
-  private generatePaymentId(): string {
-    return 'PAY_' + Date.now().toString() + '_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  async createCashReservation(reservationData: any): Promise<any> {
+    try {
+      // Mock implementation for demo - replace with actual API call
+      console.log('Creating cash reservation:', reservationData);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Mock successful response
+      const reservationCode = 'RES-' + Math.random().toString(36).substr(2, 8).toUpperCase();
+      
+      return {
+        success: true,
+        data: {
+          id: 'res_' + Date.now(),
+          reservationCode: reservationCode,
+          status: 'reserved',
+          amount: reservationData.finalAmount,
+          expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours
+        },
+        message: 'Reservation created successfully'
+      };
+      
+      // TODO: Replace with actual API call
+      // const response = await firstValueFrom(
+      //   this.http.post(`${this.apiUrl}/cash-reservation`, reservationData)
+      // );
+      // return response;
+      
+    } catch (error) {
+      console.error('Cash reservation failed:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Reservation failed'
+      };
+    }
   }
 
   /**
-   * Generate reservation ID
+   * Get payment status
+   * @param paymentId - Payment ID to check status
+   * @returns Promise with payment status
    */
-  private generateReservationId(): string {
-    return 'RES_' + Date.now().toString() + '_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  async getPaymentStatus(paymentId: string): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get(`${this.apiUrl}/${paymentId}`)
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to get payment status:', error);
+      throw error;
+    }
   }
 
   /**
-   * Generate reservation number
+   * List user payments
+   * @param userId - User ID
+   * @returns Promise with payments list
    */
-  private generateReservationNumber(): string {
-    const timestamp = Date.now().toString();
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    return `R${timestamp.slice(-6)}${random}`;
+  async getUserPayments(userId: string): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get(`${this.apiUrl}/user/${userId}`)
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to get user payments:', error);
+      throw error;
+    }
   }
 
   /**
-   * Format amount for PayMaya (they expect amount in centavos)
+   * Apply discount code
+   * @param discountCode - Discount code
+   * @param amount - Base amount to apply discount to
+   * @returns Promise with discounted amount
    */
-  private formatAmount(amount: number): number {
-    return Math.round(amount * 100);
+  async applyDiscount(discountCode: string, amount: number): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post(`${this.apiUrl}/apply-discount`, { discountCode, amount })
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to apply discount:', error);
+      throw error;
+    }
   }
 
   /**
-   * Get payment configuration (for debugging)
+   * Get available payment methods
+   * @returns Promise with payment methods list
    */
-  getPaymentConfig() {
-    return {
-      baseUrl: this.PAYMENT_CONFIG.baseUrl,
-      // secret keys are not available in client
-      hasSecretKey: false
-    };
+  async getPaymentMethods(): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get(`${this.apiUrl}/methods`)
+      );
+      return response;
+    } catch (error) {
+      console.error('Failed to get payment methods:', error);
+      throw error;
+    }
   }
 }

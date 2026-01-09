@@ -1,0 +1,46 @@
+@"
+# Dependencies
+node_modules/
+Commuters/node_modules/
+transit/node_modules/
+
+# Build outputs
+www/
+Commuters/www/
+transit/www/
+dist/
+
+# Angular cache
+.angular/
+Commuters/.angular/
+transit/.angular/
+
+# Android build files
+android/app/build/
+Commuters/android/app/build/
+Commuters/android/.gradle/
+transit/android/app/build/
+
+# iOS build files
+ios/App/Pods/
+ios/App/build/
+
+# Environment files
+.env
+.env.local
+
+# IDE
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+.npmrc
+*.tmp
+*.temp
+"@ | Out-File -FilePath ".gitignore" -Encoding UTF8
