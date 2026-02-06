@@ -40,7 +40,7 @@ export class LoginPage implements OnInit {
     const { email, password } = this.loginForm.value;
 
     try {
-      // ✅ Use ApiService
+      //   Use ApiService
       const response = await firstValueFrom(
         this.apiService.loginDriver({ email, password })
       );

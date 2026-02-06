@@ -22,10 +22,12 @@ ion-content {
   margin-bottom: 2rem;
   animation: fadeInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   
-  ion-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+  .app-icon {
+    font-size: 4rem;
     color: #ffffff;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    animation: iconBounce 2s ease-in-out infinite;
   }
   
   h1 {

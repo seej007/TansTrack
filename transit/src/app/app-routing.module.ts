@@ -28,7 +28,11 @@ const routes: Routes = [
   {
     path: '**',
     redirectTo: '/tabs/home'
+  },  {
+    path: 'notifications',
+    loadChildren: () => import('./notifications/notifications.module').then( m => m.NotificationsPageModule)
   }
+
 ];
 
 @NgModule({

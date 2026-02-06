@@ -75,30 +75,6 @@ export class ApiService {
     );
   }
 
-  // MAIN METHOD: Get driver schedules (this calls your existing ScheduleController::getDriverSchedules)
-  // getDriverSchedules(driverId: number): Observable<any> {
-  //   console.log(`API: Getting schedules for driver ${driverId}`);
-  //   console.log(`API: Making request to: ${this.apiUrl}/drivers/${driverId}/schedules`);
-    
-  //   return this.http.get(`${this.apiUrl}/drivers/${driverId}/schedules`, {
-  //     headers: this.getHeaders()
-  //   }).pipe(
-  //     tap(response => {
-  //       console.log('Schedules API response:', response);
-  //       if (response && (response as any).schedules) {
-  //         const schedules = (response as any).schedules;
-  //         console.log(`Found ${schedules.all?.length || 0} total schedules`);
-  //         console.log(`Today: ${schedules.today?.length || 0}, Upcoming: ${schedules.upcoming?.length || 0}`);
-  //       }
-  //     }),
-  //     catchError(error => {
-  //       console.error('Error fetching driver schedules:', error);
-  //       console.error('Request URL was:', `${this.apiUrl}/drivers/${driverId}/schedules`);
-  //       return this.handleError(error);
-  //     })
-  //   );
-  // }
-
   getDriverSchedules(driverId: number): Observable<any> {
     // Define the relative endpoint path correctly.
     // Based on your Laravel routes/api.php, it should be 'drivers/{id}/schedules'.
@@ -115,17 +91,6 @@ export class ApiService {
         })
       );
   }
-
-  // Schedule actions (these call your existing ScheduleController methods)
-  // acceptSchedule(scheduleId: number): Observable<any> {
-  //   console.log(`API: Accepting schedule ${scheduleId}`);
-  //   return this.http.put(`${this.apiUrl}/schedules/${scheduleId}/accept`, {}, {
-  //     headers: this.getHeaders()
-  //   }).pipe(
-  //     tap(response => console.log('Accept schedule response:', response)),
-  //     catchError(this.handleError)
-  //   );
-  // }
 
   declineSchedule(scheduleId: number): Observable<any> {
     console.log(`API: Declining schedule ${scheduleId}`);
@@ -276,5 +241,38 @@ export class ApiService {
         tap(response => console.log('Login API Response:', response)),
         catchError(this.handleError)
       );
+  }
+
+  reportIssue(driverId: number, issueType: string, message: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/v1/notifications/driver-send`, {
+        driver_id: driverId,
+        type: 'issue_report',
+        message: message || `Driver reported a ${issueType} issue.`,
+        issue_type: issueType
+    }, { headers: this.getHeaders() });
+  }
+
+  sendEmergencyAlert(driverId: number, emergencyType: string, message: string): Observable<any> {
+      return this.http.post(`${this.apiUrl}/v1/notifications/driver-send`, {
+          driver_id: driverId,
+          type: 'emergency',
+          message: message || `Driver triggered an emergency alert: ${emergencyType}`,
+          emergency_type: emergencyType
+      }, { headers: this.getHeaders() });
+  }
+
+  getDriverNotifications(driverId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/v1/notifications/driver/${driverId}`, {
+      headers: this.getHeaders()
+    }).pipe(
+      tap(response => console.log('Driver notifications response:', response)),
+      catchError(this.handleError)
+    );
+  }
+
+  markNotificationAsRead(notificationId: number, driverId: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/v1/notifications/${notificationId}/read`, {
+      driver_id: driverId
+    }, { headers: this.getHeaders() });
   }
 }

@@ -1,13 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router'; // ADD THIS IMPORT
+import { Router } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
 import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 interface RouteGeometry {
-  type: string; // e.g., "LineString"
-  coordinates: [number, number][]; // [lng, lat] pairs
+  type: string;
+  coordinates: [number, number][];
 }
 
 interface Schedule {
@@ -29,7 +29,7 @@ interface Schedule {
     end_location: string;
     distance_km?: number;
     estimated_duration?: number;
-    geometry?: RouteGeometry; // ← ADD THIS
+    geometry?: RouteGeometry;
   };
   bus?: {
     id: number;
@@ -44,8 +44,10 @@ interface Schedule {
 interface Summary {
   today_schedules: number;
   future_schedules: number;
+  past_schedules: number;
   active_today: number;
   completed_today: number;
+  pending_action: number;
 }
 
 @Component({
@@ -54,21 +56,23 @@ interface Summary {
   styleUrls: ['./schedule.page.scss'],
   standalone: false
 })
-
 export class SchedulePage implements OnInit, OnDestroy {
   schedules: Schedule[] = [];
   todaySchedules: Schedule[] = [];
   upcomingSchedules: Schedule[] = [];
+  pastSchedules: Schedule[] = [];
   completedSchedules: Schedule[] = [];
   isLoading: boolean = false;
   error: string = '';
-  driverId: string = ''; // Keep as string but handle null properly
+  driverId: string = '';
   selectedSegment: string = 'today';
   summary: Summary = {
     today_schedules: 0,
     future_schedules: 0,
+    past_schedules: 0,
     active_today: 0,
-    completed_today: 0
+    completed_today: 0,
+    pending_action: 0
   };
   
   private subscription?: Subscription;
@@ -79,21 +83,21 @@ export class SchedulePage implements OnInit, OnDestroy {
     private loadingController: LoadingController,
     private alertController: AlertController,
     private toastController: ToastController,
-    private router: Router // ADD THIS TO CONSTRUCTOR
+    private router: Router
   ) {}
 
   ngOnInit() {
-      const driverId = this.authService.getDriverId(); // This calls localStorage.getItem('driverId')
+    const driverId = this.authService.getDriverId();
 
-      if (!driverId) {
-          console.error('No driver ID found - redirecting to login');
-          this.router.navigate(['/login']);
-          return;
-      }
+    if (!driverId) {
+      console.error('No driver ID found - redirecting to login');
+      this.router.navigate(['/login']);
+      return;
+    }
 
-      this.driverId = driverId; // Store as string
-      console.log(`Schedule page initialized for driver ID: ${this.driverId}`); // <-- ADD THIS LOG
-      this.loadSchedules(); // Passes this.driverId (string) to loadSchedules
+    this.driverId = driverId;
+    console.log(`Schedule page initialized for driver ID: ${this.driverId}`);
+    this.loadSchedules();
   }
 
   ngOnDestroy() {
@@ -104,10 +108,10 @@ export class SchedulePage implements OnInit, OnDestroy {
 
   onSegmentChanged(event: any) {
     this.selectedSegment = event.detail.value;
+    console.log('Segment changed to:', this.selectedSegment);
   }
 
   async loadSchedules() {
-    // Security check - make sure user is still logged in
     if (!this.driverId) {
       console.error('No driver ID - user not logged in');
       this.router.navigate(['/login']);
@@ -124,10 +128,11 @@ export class SchedulePage implements OnInit, OnDestroy {
     this.error = '';
 
     try {
-        const driverIdNum = parseInt(this.driverId, 10); // Explicitly specify radix 10
-        if (isNaN(driverIdNum)) {
-             throw new Error("Invalid driver ID format");
-        }      
+      const driverIdNum = parseInt(this.driverId, 10);
+      if (isNaN(driverIdNum)) {
+        throw new Error("Invalid driver ID format");
+      }
+      
       console.log(`Loading schedules for logged-in driver ${driverIdNum}`);
       
       this.subscription = this.apiService.getDriverSchedules(driverIdNum).subscribe({
@@ -135,13 +140,20 @@ export class SchedulePage implements OnInit, OnDestroy {
           console.log('Schedules response:', response);
           
           if (response.success && response.schedules) {
+            // Get all schedules
             this.schedules = response.schedules.all || [];
+            
+            // Get categorized schedules from API
             this.todaySchedules = response.schedules.today || [];
             this.upcomingSchedules = response.schedules.upcoming || [];
+            this.pastSchedules = response.schedules.past || [];
+            
+            // Also get completed schedules
             this.completedSchedules = this.schedules.filter(s => s.status === 'completed');
             
             this.updateSummary();
-            console.log(`Loaded ${this.schedules.length} schedules for driver ${this.driverId}`);
+            console.log(`Loaded ${this.schedules.length} total schedules for driver ${this.driverId}`);
+            console.log(`Today: ${this.todaySchedules.length}, Upcoming: ${this.upcomingSchedules.length}, Past: ${this.pastSchedules.length}`);
           } else {
             this.error = 'No schedules found for your account';
             console.log('No schedules found for this driver');
@@ -150,12 +162,14 @@ export class SchedulePage implements OnInit, OnDestroy {
         error: (error) => {
           console.error('Error loading schedules:', error);
           this.error = 'Failed to load your schedules. Please try again.';
+          this.presentToast('Failed to load schedules', 'danger');
         }
       });
       
     } catch (error) {
       console.error('Error in loadSchedules:', error);
       this.error = 'Error loading schedules';
+      this.presentToast('Error loading schedules', 'danger');
     } finally {
       this.isLoading = false;
       await loading.dismiss();
@@ -163,92 +177,27 @@ export class SchedulePage implements OnInit, OnDestroy {
   }
 
   private updateSummary() {
-    // Use the categorized arrays from the API response
     const todaySchedules = this.todaySchedules || [];
     const upcomingSchedules = this.upcomingSchedules || [];
-    const allSchedules = this.schedules || [];
+    const pastSchedules = this.pastSchedules || [];
 
     // Count active and completed for today
     const activeToday = todaySchedules.filter(s => s.status === 'active').length;
     const completedToday = todaySchedules.filter(s => s.status === 'completed').length;
 
+    // Count schedules that need action (scheduled status)
+    const pendingAction = this.schedules.filter(s => s.status === 'scheduled').length;
+
     this.summary = {
       today_schedules: todaySchedules.length,
       future_schedules: upcomingSchedules.length,
+      past_schedules: pastSchedules.length,
       active_today: activeToday,
-      completed_today: completedToday
+      completed_today: completedToday,
+      pending_action: pendingAction
     };
-  }
 
-  private loadMockSchedules() {
-    const today = new Date().toISOString().split('T')[0];
-    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    
-    this.schedules = [
-      {
-        id: 1,
-        route_id: 1,
-        driver_id: parseInt(this.driverId),
-        bus_id: 1,
-        date: today,
-        start_time: '08:30:00',
-        end_time: '10:30:00',
-        status: 'scheduled',
-        fare_regular: 15.00,
-        fare_aircon: 20.00,
-        notes: 'Please arrive 15 minutes early for vehicle inspection.',
-        route: {
-          id: 1,
-          name: 'Route 101',
-          start_location: 'Downtown Terminal',
-          end_location: 'Airport',
-          distance_km: 25,
-          estimated_duration: 120
-        },
-        bus: {
-          id: 1,
-          bus_number: 'BUS-001',
-          model: 'Toyota Coaster',
-          is_aircon: true
-        },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        route_id: 2,
-        driver_id: parseInt(this.driverId),
-        bus_id: 2,
-        date: tomorrow,
-        start_time: '14:00:00',
-        end_time: '16:00:00',
-        status: 'scheduled',
-        fare_regular: 12.00,
-        fare_aircon: 16.00,
-        notes: 'Rush hour route - expect heavy traffic.',
-        route: {
-          id: 2,
-          name: 'Route 102',
-          start_location: 'Mall',
-          end_location: 'University',
-          distance_km: 18,
-          estimated_duration: 90
-        },
-        bus: {
-          id: 2,
-          bus_number: 'BUS-002',
-          model: 'Isuzu NPR',
-          is_aircon: false
-        },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-    ];
-    
-    this.todaySchedules = this.schedules.filter(s => s.date === today);
-    this.upcomingSchedules = this.schedules.filter(s => s.date > today);
-    this.completedSchedules = [];
-    this.updateSummary();
+    console.log('Summary updated:', this.summary);
   }
 
   getRouteDetails(schedule: Schedule): string {
@@ -294,21 +243,11 @@ export class SchedulePage implements OnInit, OnDestroy {
               const response = await this.apiService.post(`schedules/${schedule.id}/accept`, {}).toPromise();
               if (response && response.success) {
                 await this.loadSchedules();
-                const toast = await this.toastController.create({
-                  message: 'Schedule accepted successfully!',
-                  duration: 2000,
-                  color: 'success'
-                });
-                await toast.present();
+                await this.presentToast('Schedule accepted successfully!', 'success');
               }
             } catch (error) {
               console.error('Error accepting schedule:', error);
-              const toast = await this.toastController.create({
-                message: 'Failed to accept schedule',
-                duration: 2000,
-                color: 'danger'
-              });
-              await toast.present();
+              await this.presentToast('Failed to accept schedule', 'danger');
             }
           }
         }
@@ -332,23 +271,12 @@ export class SchedulePage implements OnInit, OnDestroy {
             try {
               const response = await this.apiService.declineSchedule(schedule.id).toPromise();
               if (response.success) {
-                schedule.status = 'declined';
-                this.updateSummary();
-                const toast = await this.toastController.create({
-                  message: 'Schedule declined',
-                  duration: 2000,
-                  color: 'warning'
-                });
-                await toast.present();
+                await this.loadSchedules();
+                await this.presentToast('Schedule declined', 'warning');
               }
             } catch (error) {
               console.error('Error declining schedule:', error);
-              const toast = await this.toastController.create({
-                message: 'Failed to decline schedule',
-                duration: 2000,
-                color: 'danger'
-              });
-              await toast.present();
+              await this.presentToast('Failed to decline schedule', 'danger');
             }
           }
         }
@@ -361,21 +289,13 @@ export class SchedulePage implements OnInit, OnDestroy {
     try {
       const response = await this.apiService.startSchedule(schedule.id).toPromise();
       if (response.success) {
-        // Reload schedules after starting
         await this.loadSchedules();
         
-        const toast = await this.toastController.create({
-          message: 'Trip started successfully! Navigating to route map...',
-          duration: 2000,
-          color: 'success'
-        });
-        await toast.present();
+        await this.presentToast('Trip started successfully! Navigating to route map...', 'success');
 
-        // Navigate to map page to show route navigation
         console.log('Navigating to map page for schedule:', schedule.id);
         console.log('Route geometry available:', schedule.route?.geometry ? 'Yes' : 'No');
         
-        // Navigate to the map page after successful start
         this.router.navigate(['/map'], {
           queryParams: {
             scheduleId: schedule.id,
@@ -385,37 +305,37 @@ export class SchedulePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error starting schedule:', error);
-      const toast = await this.toastController.create({
-        message: 'Failed to start trip',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
+      await this.presentToast('Failed to start trip', 'danger');
     }
   }
 
   async completeSchedule(schedule: Schedule) {
-    try {
-      const response = await this.apiService.completeSchedule(schedule.id).toPromise();
-      if (response.success) {
-        // Reload schedules after completing
-        await this.loadSchedules();
-        const toast = await this.toastController.create({
-          message: 'Trip completed successfully!',
-          duration: 2000,
-          color: 'success'
-        });
-        await toast.present();
-      }
-    } catch (error) {
-      console.error('Error completing schedule:', error);
-      const toast = await this.toastController.create({
-        message: 'Failed to complete trip',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-    }
+    const alert = await this.alertController.create({
+      header: 'Complete Trip',
+      message: `Mark this trip as completed?`,
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Complete',
+          handler: async () => {
+            try {
+              const response = await this.apiService.completeSchedule(schedule.id).toPromise();
+              if (response.success) {
+                await this.loadSchedules();
+                await this.presentToast('Trip completed successfully!', 'success');
+              }
+            } catch (error) {
+              console.error('Error completing schedule:', error);
+              await this.presentToast('Failed to complete trip', 'danger');
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   getStatusColor(status: string): string {
@@ -427,6 +347,18 @@ export class SchedulePage implements OnInit, OnDestroy {
       case 'declined':
       case 'cancelled': return 'danger';
       default: return 'medium';
+    }
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status?.toLowerCase()) {
+      case 'active': return 'radio-button-on';
+      case 'scheduled': return 'time';
+      case 'accepted': return 'checkmark-circle';
+      case 'completed': return 'checkmark-done-circle';
+      case 'declined': return 'close-circle';
+      case 'cancelled': return 'ban';
+      default: return 'help-circle';
     }
   }
 
@@ -448,10 +380,25 @@ export class SchedulePage implements OnInit, OnDestroy {
   formatDate(dateString: string): string {
     try {
       const date = new Date(dateString);
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      // Check if it's today
+      if (date.toDateString() === today.toDateString()) {
+        return 'Today';
+      }
+      
+      // Check if it's tomorrow
+      if (date.toDateString() === tomorrow.toDateString()) {
+        return 'Tomorrow';
+      }
+
       return date.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
-        day: 'numeric'
+        day: 'numeric',
+        year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
       });
     } catch {
       return dateString;
@@ -463,5 +410,15 @@ export class SchedulePage implements OnInit, OnDestroy {
     if (event) {
       event.target.complete();
     }
+  }
+
+  async presentToast(message: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      color: color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

@@ -86,7 +86,7 @@ export class CommuterService {
       'ngrok-skip-browser-warning': 'true'
     });
 
-    // ✅ SIMPLE: Just load all routes like before (this endpoint works and is public)
+    //   SIMPLE: Just load all routes like before (this endpoint works and is public)
     console.log('Loading routes from:', `${this.apiUrl}/routes`);
     this.http.get<any>(`${this.apiUrl}/routes`, { headers }).subscribe({
       next: (response: any) => {
@@ -120,7 +120,7 @@ export class CommuterService {
           };
         });
         this.routesSubject.next(liveRoutes);
-        console.log('✅ Processed routes:', liveRoutes.length);
+        console.log('  Processed routes:', liveRoutes.length);
       },
       error: (error) => {
         console.error('Error loading routes:', error);

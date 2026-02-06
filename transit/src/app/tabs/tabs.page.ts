@@ -21,6 +21,7 @@ interface Route {
 export class TabsPage implements OnInit {
   driverId: number | null = null;
   assignedRoutes: Route[] = [];
+  unreadCount: number = 0;
 
   constructor(private apiService: ApiService) {}
 

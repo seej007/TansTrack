@@ -79,7 +79,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
         Array.isArray(this.routeGeoJson.coordinates) && 
         this.routeGeoJson.coordinates.length >= 2) {
         
-      console.log('✅ GeoJSON validation passed - drawing route');
+      console.log('  GeoJSON validation passed - drawing route');
 
       // Add GeoJSON source
       console.log('Adding GeoJSON source with data:', {
@@ -94,7 +94,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
           geometry: this.routeGeoJson
         }
       });
-      console.log('✅ GeoJSON source added successfully');
+      console.log('  GeoJSON source added successfully');
 
       // Add line layer
       this.map.addLayer({
@@ -110,7 +110,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
           'line-width': 6
         }
       });
-      console.log('✅ Route line layer added successfully');
+      console.log('  Route line layer added successfully');
 
       // Fit map to route
       const bounds = new mapboxgl.LngLatBounds();
@@ -128,7 +128,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
       
       console.log('Final bounds:', bounds);
       this.map.fitBounds(bounds, { padding: 40, maxZoom: 14 });
-      console.log('✅ Map fitted to route bounds');
+      console.log('  Map fitted to route bounds');
 
       // Add route markers (start, end, and waypoints)
       this.addRouteMarkers();
@@ -158,7 +158,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
       .addTo(this.map);
     
     this.routeMarkers.push(startMarker);
-    console.log('✅ Added start marker at:', startCoord);
+    console.log('  Added start marker at:', startCoord);
 
     // Add end marker (red) - only if different from start
     if (coordinates.length > 1) {
@@ -172,7 +172,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
         .addTo(this.map);
       
       this.routeMarkers.push(endMarker);
-      console.log('✅ Added end marker at:', endCoord);
+      console.log('  Added end marker at:', endCoord);
     }
 
     // Add waypoint markers (blue) - for intermediate points
@@ -192,11 +192,11 @@ export class RouteMapComponent implements AfterViewInit, OnChanges {
             .addTo(this.map);
           
           this.routeMarkers.push(waypointMarker);
-          console.log(`✅ Added waypoint marker ${i} at:`, waypointCoord);
+          console.log(`  Added waypoint marker ${i} at:`, waypointCoord);
         }
       }
     }
 
-    console.log(`✅ Added ${this.routeMarkers.length} total route markers`);
+    console.log(`  Added ${this.routeMarkers.length} total route markers`);
   }
 }

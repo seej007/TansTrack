@@ -132,12 +132,12 @@ export class MapPage implements OnInit {
                 
                 if (startCoordsParsed.length === 2 && !isNaN(startCoordsParsed[0]) && !isNaN(startCoordsParsed[1])) {
                   startCoords = [startCoordsParsed[0], startCoordsParsed[1]];
-                  console.log('✅ Valid start coords:', startCoords);
+                  console.log('  Valid start coords:', startCoords);
                 }
                 
                 if (endCoordsParsed.length === 2 && !isNaN(endCoordsParsed[0]) && !isNaN(endCoordsParsed[1])) {
                   endCoords = [endCoordsParsed[0], endCoordsParsed[1]];
-                  console.log('✅ Valid end coords:', endCoords);
+                  console.log('  Valid end coords:', endCoords);
                 }
               } catch (e) {
                 console.warn('❌ Failed to parse coordinates:', e);
@@ -214,7 +214,7 @@ export class MapPage implements OnInit {
                         type: 'LineString',
                         coordinates: coordinates
                       };
-                      console.log('✅ Successfully created geometry from regex:', geometryData);
+                      console.log('  Successfully created geometry from regex:', geometryData);
                     } catch (e) {
                       console.error('Regex extraction failed:', e);
                     }
@@ -222,7 +222,7 @@ export class MapPage implements OnInit {
                 }
                 
                 if (geometryData && geometryData.type === 'LineString' && Array.isArray(geometryData.coordinates) && geometryData.coordinates.length >= 2) {
-                  console.log('✅ Valid LineString geometry found with', geometryData.coordinates.length, 'points');
+                  console.log('  Valid LineString geometry found with', geometryData.coordinates.length, 'points');
                   console.log('Raw coordinates:', geometryData.coordinates);
                   
                   // Ensure coordinates are numbers (in case they're parsed as strings)
@@ -248,10 +248,10 @@ export class MapPage implements OnInit {
                       coordinates: processedCoordinates
                     };
                     
-                    console.log('✅ Final mapRouteGeoJson created:', this.mapRouteGeoJson);
-                    console.log('✅ Coordinates count:', processedCoordinates.length);
-                    console.log('✅ First coordinate:', processedCoordinates[0]);
-                    console.log('✅ Last coordinate:', processedCoordinates[processedCoordinates.length - 1]);
+                    console.log('  Final mapRouteGeoJson created:', this.mapRouteGeoJson);
+                    console.log('  Coordinates count:', processedCoordinates.length);
+                    console.log('  First coordinate:', processedCoordinates[0]);
+                    console.log('  Last coordinate:', processedCoordinates[processedCoordinates.length - 1]);
                   }
                 } else {
                   console.log('❌ Invalid geometry structure - failing validation');
@@ -393,10 +393,10 @@ export class MapPage implements OnInit {
       
       if (data.routes && data.routes.length > 0) {
         const routeGeometry = data.routes[0].geometry;
-        console.log('✅ Got route geometry from Mapbox:', routeGeometry);
+        console.log('  Got route geometry from Mapbox:', routeGeometry);
         
         this.mapRouteGeoJson = routeGeometry;
-        console.log('✅ Updated mapRouteGeoJson with Mapbox route');
+        console.log('  Updated mapRouteGeoJson with Mapbox route');
       } else {
         console.warn('❌ No routes found in Mapbox response');
         // Fallback to simple line
@@ -436,11 +436,11 @@ export class MapPage implements OnInit {
       
       if (data.routes && data.routes.length > 0) {
         const routeGeometry = data.routes[0].geometry;
-        console.log('✅ Got detailed driving route geometry from Mapbox');
+        console.log('  Got detailed driving route geometry from Mapbox');
         console.log('Route has', routeGeometry.coordinates.length, 'coordinate points');
         
         this.mapRouteGeoJson = routeGeometry;
-        console.log('✅ Updated mapRouteGeoJson with detailed driving route');
+        console.log('  Updated mapRouteGeoJson with detailed driving route');
       } else {
         console.warn('❌ No waypoint routes found in Mapbox response');
         console.log('Response data:', data);

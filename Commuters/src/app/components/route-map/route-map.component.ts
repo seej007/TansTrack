@@ -122,7 +122,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
     Array.isArray(this.routeGeoJson.coordinates) && 
     this.routeGeoJson.coordinates.length >= 2) {
         
-      console.log('✅ GeoJSON validation passed - drawing route');
+      console.log('  GeoJSON validation passed - drawing route');
 
       // Add GeoJSON source
       console.log('Adding GeoJSON source with data:', {
@@ -170,7 +170,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
           geometry: { type: 'LineString', coordinates: numericCoords }
         }
       });
-      console.log('✅ GeoJSON source added successfully');
+      console.log('  GeoJSON source added successfully');
 
       // Add line layer
       this.map.addLayer({
@@ -186,7 +186,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
           'line-width': 6
         }
       });
-      console.log('✅ Route line layer added successfully');
+      console.log('  Route line layer added successfully');
 
       // Fit map to route
       const bounds = new mapboxgl.LngLatBounds();
@@ -202,7 +202,7 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
       
       console.log('Final bounds:', bounds);
       this.map.fitBounds(bounds, { padding: 40, maxZoom: 14 });
-      console.log('✅ Map fitted to route bounds');
+      console.log('  Map fitted to route bounds');
 
       // If the stored startCoord/endCoord were provided via @Input, normalize them
       // using the same heuristic so they match the route coordinates ordering.
