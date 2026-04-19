@@ -1,525 +1,111 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ToastController, AlertController, LoadingController } from '@ionic/angular';
-import { CommuterService, LiveRoute } from '../services/commuter.service';
-import { BusSimulatorService } from '../services/bus-simulator.service';
-import { Subscription } from 'rxjs';
+import { Component } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  standalone: false,
+  standalone: true,
 })
-export class HomePage implements OnInit, OnDestroy {
-  currentTime: string = '';
+export class HomePage {
+currentTime: string = '';
+ticket: any[] = [];
+ticketName: string = '';
+validUntil: string = '';
+trips: any[] = [];
+recentTrips: any[] = [];
+supportMessage: string = '';
 
-  // Real route data
-  routes: LiveRoute[] = [];
-  selectedRoute: LiveRoute | null = null;
-  selectedRouteId: string = '';
-  private subscriptions: Subscription[] = [];
-  // e-ticket state
-  showTicket: boolean = false;
-  ticketDestination: string | null = null;
-  ticketFare: number | null = null;
-  ticketId: string = ''; // Store the ticket ID to prevent regeneration
-  paymentMethod: string = 'cash'; // Default payment method
+  constructor(private toastController: ToastController) {}
 
-  // Bus simulation for route visualization and distance tracking
-  boardingLocation: { lng: number; lat: number } | null = null;
-  currentBusPosition: { lng: number; lat: number } | null = null;
-  distanceTraveled: number = 0; // Distance in kilometers from boarding point
-  isSimulationActive: boolean = false;
-  private busSimulationSubscription: Subscription | null = null;
-
-  constructor(
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private loadingController: LoadingController,
-    private commuterService: CommuterService,
-    private busSimulator: BusSimulatorService
-  ) {}
-
-  ngOnInit() {
+ ngOnInit() {
     this.updateCurrentTime();
     setInterval(() => {
       this.updateCurrentTime();
     }, 60000);
-    
-    this.loadRouteData();
-  }
-
-  ngOnDestroy() {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    this.stopBusSimulation();
-  }
-
-  loadRouteData() {
-    console.log('Home page: Loading route data...');
-    // Subscribe to routes data
-    const routesSub = this.commuterService.routes$.subscribe(routes => {
-      console.log('Home page: Received routes:', routes);
-      this.routes = routes;
-    });
-    
-    this.subscriptions.push(routesSub);
-  }
-  async onRouteSelected() {
-    if (!this.selectedRouteId) {
-      this.selectedRoute = null;
-      return;
-    }
-
-    // pick from cache
-    this.selectedRoute = this.routes.find(route => route.id === this.selectedRouteId) || null;
-    console.log('Selected route:', this.selectedRoute);
-
-    if (!this.selectedRoute) return;
-
-    // Parse geometry if it's a string
-    if (this.selectedRoute.geometry && typeof this.selectedRoute.geometry === 'string') {
-      try {
-        this.selectedRoute.geometry = JSON.parse(this.selectedRoute.geometry);
-      } catch (e) {
-        console.error('Failed to parse route geometry:', e);
-      }
-    }
-
-    // Show e-ticket immediately when a route is selected
-    try {
-      this.ticketDestination = this.selectedRoute.name || null;
-      
-      // Calculate fare with passenger type discount from backend
-      const passengerType = this.commuterService.getPassengerType();
-      console.log('🎫 Calculating fare for:', {
-        routeId: this.selectedRoute.id,
-        passengerType: passengerType,
-        baseFare: this.selectedRoute.basefare
-      });
-      
-      this.commuterService.calculateFareWithDiscount(
-        this.selectedRoute.id,
-        passengerType
-      ).subscribe({
-        next: (response) => {
-          console.log('✅ Backend fare response:', response);
-          if (response.success && response.data) {
-            // Store the discounted fare from backend
-            this.ticketFare = response.data.final_fare;
-            console.log('💰 Final fare set to:', this.ticketFare);
-            
-            // Show discount info if applicable
-            if (response.data.discount_amount > 0) {
-              this.showToast(
-                `${passengerType} Discount Applied: -₱${response.data.discount_amount} (${response.data.discount_percent}%)`,
-                'success'
-              );
-            }
-          }
-        },
-        error: (error) => {
-          console.error('❌ Error calculating fare:', error);
-          // Fallback to base fare if API fails
-          this.ticketFare = this.selectedRoute?.basefare || 0;
-          console.log('⚠️ Using fallback base fare:', this.ticketFare);
-        }
-      });
-      
-      this.showTicket = true;
-      
-      // Start bus simulation if geometry is available
-      if (this.selectedRoute.geometry?.coordinates) {
-        console.log(`✅ Route has ${this.selectedRoute.geometry.coordinates.length} waypoints`);
-        console.log(`✅ Distance: ${this.selectedRoute.distance_km} km`);
-        this.startBusSimulation();
-      } else {
-        console.warn('⚠️ No geometry available for route');
-      }
-    } catch (e) {
-      console.error('Failed to set ticket data on selection:', e);
-    }
-  }
-
-  onTrackRoute() {
-    if (!this.selectedRoute) {
-      this.showToast('Please select a route to track', 'warning');
-      return;
-    }
-    console.log('Tracking route requested for:', this.selectedRoute);
-    // For now we just notify the user; future improvement: navigate to a live-tracking view
-    this.showToast(`Tracking ${this.selectedRoute.name}`, 'success');
-  }
-
-  // Quick pay flow for demo: pays with passenger type discount applied
-  async payFare() {
-    if (!this.selectedRoute) {
-      this.showToast('Select a route first', 'warning');
-      return;
-    }
-    
-    // Calculate fare with passenger type discount from backend
-    const passengerType = this.commuterService.getPassengerType();
-    
-    this.commuterService.calculateFareWithDiscount(
-      this.selectedRoute.id,
-      passengerType
-    ).subscribe({
-      next: (response) => {
-        if (response.success && response.data) {
-          // Demo mode: instead of opening an external payment flow, just show the e-ticket
-          this.ticketDestination = this.selectedRoute?.name || null;
-          this.ticketFare = response.data.final_fare; // Use discounted fare from backend
-          this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
-          this.showTicket = true;
-          
-          // Show appropriate message
-          let message = `e-ticket for ${this.ticketDestination} (₱${response.data.final_fare.toFixed(2)})`;
-          if (response.data.discount_amount > 0) {
-            message += ` - ${passengerType} discount applied!`;
-          }
-          this.showToast(message, 'success');
-        }
-      },
-      error: (error) => {
-        console.error('Error calculating fare:', error);
-        this.showToast('Error calculating fare', 'danger');
-      }
-    });
-  }
-
-  async showToast(message: string, color: string = 'primary') {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 3000,
-      color: color,
-      position: 'top'
-    });
-    toast.present();
-  }
-
-  generateTicket() {
-    if (this.selectedRoute) {
-      this.ticketDestination = this.selectedRoute.name;
-      
-      // Calculate fare with passenger type discount from backend
-      const passengerType = this.commuterService.getPassengerType();
-      
-      this.commuterService.calculateFareWithDiscount(
-        this.selectedRoute.id,
-        passengerType
-      ).subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.ticketFare = response.data.final_fare; // Use discounted fare from backend
-            this.ticketId = this.generateTicketId(); // Generate and store the ticket ID once
-            console.log('Generated Ticket ID:', this.ticketId);
-            console.log('Fare Calculation:', response.data);
-            this.showTicket = true;
-            
-            // Start bus simulation for route tracking (distance display only)
-            this.startBusSimulation();
-            
-            // Show appropriate message with discount info
-            let message = `e-Ticket generated! Fare: ₱${response.data.final_fare.toFixed(2)}`;
-            if (response.data.discount_amount > 0) {
-              message += ` (${passengerType} discount: -₱${response.data.discount_amount})`;
-            }
-            this.showToast(message, 'success');
-          }
-        },
-        error: (error) => {
-          console.error('Error calculating fare:', error);
-          // Fallback to base fare if API fails
-          this.ticketFare = this.selectedRoute?.basefare || 0;
-          this.ticketId = this.generateTicketId();
-          this.showTicket = true;
-          this.startBusSimulation();
-          this.showToast('e-Ticket generated! Using base fare', 'warning');
-        }
-      });
-    }
-  }
-
-  private generateTicketId(): string {
-    // Generate a unique ticket ID based on timestamp and random number
-    const timestamp = Date.now().toString(36).toUpperCase();
-    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const id = `${timestamp}-${random}`;
-    console.log('generateTicketId called, ID:', id);
-    return id;
-  }
-
-  getPaymentMethodLabel(): string {
-    const labels: { [key: string]: string } = {
-      'cash': 'Cash',
-      'paymaya': 'PayMaya',
-      'gcash': 'GCash'
-    };
-    return labels[this.paymentMethod] || 'Cash';
-  }
-
-  getPaymentIcon(): string {
-    const icons: { [key: string]: string } = {
-      'cash': 'cash-outline',
-      'paymaya': 'card-outline',
-      'gcash': 'phone-portrait-outline'
-    };
-    return icons[this.paymentMethod] || 'cash-outline';
-  }
-
-  closeTicket() {
-    this.showTicket = false;
-    this.stopBusSimulation(); // Stop simulation when ticket is closed
-    this.showToast('Ticket closed. You can generate a new ticket anytime.', 'medium');
-  }
-
-  async shareTicket() {
-    // Check if Web Share API is available
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Transit e-Ticket',
-          text: `My e-Ticket for ${this.ticketDestination} - Ticket ID: #${this.ticketId}`,
-          url: window.location.href
-        });
-        this.showToast('Ticket shared successfully!', 'success');
-      } catch (error) {
-        console.log('Error sharing:', error);
-      }
-    } else {
-      // Fallback: Copy to clipboard
-      const ticketInfo = `Transit e-Ticket\nRoute: ${this.ticketDestination}\nTicket ID: #${this.ticketId}\nFare: ₱${this.ticketFare}\nPayment: ${this.getPaymentMethodLabel()}`;
-      
-      if (navigator.clipboard) {
-        try {
-          await navigator.clipboard.writeText(ticketInfo);
-          this.showToast('Ticket details copied to clipboard!', 'success');
-        } catch (error) {
-          this.showToast('Unable to share ticket', 'warning');
-        }
-      } else {
-        this.showToast('Sharing not supported on this device', 'warning');
-      }
-    }
-  }
-
-  async handleMakeStop() {
-    if (!this.selectedRoute) return;
-
-    const currentFare = this.ticketFare || this.selectedRoute.basefare;
-
-    const alert = await this.alertController.create({
-      header: 'Make Stop & Pay',
-      message: `
-        <div style="text-align: center; padding: 10px;">
-          <p style="font-size: 16px; margin: 10px 0;">Ready to get off?</p>
-          <p style="font-size: 14px; color: #666;">Distance traveled: ${this.getDistanceTraveled()}</p>
-          <p style="font-size: 14px; color: #666;">Please pay ₱${currentFare.toFixed(2)} to the conductor</p>
-        </div>
-      `,
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirm Payment',
-          handler: async () => {
-            // Show loading
-            const loading = await this.loadingController.create({
-              message: 'Processing...',
-              duration: 1000
-            });
-            await loading.present();
-
-            setTimeout(async () => {
-              await loading.dismiss();
-              
-              // Stop bus simulation
-              this.stopBusSimulation();
-              
-              // Close ticket and show receipt
-              this.showTicket = false;
-              this.selectedRoute = null;
-              
-              const receiptAlert = await this.alertController.create({
-                header: '✅ Payment Confirmed',
-                message: `
-                  <div style="text-align: center; padding: 10px;">
-                    <p style="font-size: 16px; margin: 10px 0;">Thank you for riding with us!</p>
-                    <p style="font-size: 14px; color: #666;">Distance: ${this.getDistanceTraveled()}</p>
-                    <p style="font-size: 14px; color: #666;">Fare: ₱${currentFare.toFixed(2)}</p>
-                    <p style="font-size: 14px; color: #666;">Receipt sent to your account</p>
-                  </div>
-                `,
-                buttons: ['Done']
-              });
-              await receiptAlert.present();
-              
-              this.showToast('Trip completed successfully', 'success');
-            }, 1000);
-          }
-        }
-      ]
-    });
-
-    await alert.present();
   }
 
   updateCurrentTime() {
     const now = new Date();
-    this.currentTime = now.toLocaleTimeString('en-US', {
-      hour: '2-digit',
+    this.currentTime = now.toLocaleTimeString('en-US', { 
+      hour: '2-digit', 
       minute: '2-digit',
-      hour12: true
+      hour12: true 
     });
   }
-
-  /**
-   * Get the calculated distance for a route
-   * @param route The route object
-   * @returns Formatted distance string (e.g., "12.5 km")
-   */
-  getRouteDistance(route: LiveRoute | null): string {
-    if (!route) {
-      return '—';
-    }
-    
-    // Use the distance_km from backend
-    if (route.distance_km && route.distance_km > 0) {
-      const distance = typeof route.distance_km === 'string' ? parseFloat(route.distance_km) : route.distance_km;
-      if (distance < 1) {
-        return `${Math.round(distance * 1000)} m`;
-      }
-      return `${distance.toFixed(1)} km`;
-    }
-    
-    return '—';
-  }
-
-  /**
-   * Start bus simulation for route visualization and distance tracking
-   * Note: Fare is fixed (basefare), simulation shows route progress and distance only
-   */
-  private startBusSimulation() {
-    // Stop any existing simulation
-    this.stopBusSimulation();
-
-    if (!this.selectedRoute?.geometry?.coordinates) {
-      console.warn('Cannot start simulation: No route geometry available');
-      return;
-    }
-
-    const coords = this.selectedRoute.geometry.coordinates;
-    if (!Array.isArray(coords) || coords.length < 2) {
-      console.warn('Cannot start simulation: Invalid coordinates');
-      return;
-    }
-
-    // Set boarding location as the first coordinate (route start)
-    const firstCoord = coords[0];
-    console.log('First coordinate from route:', firstCoord);
-    
-    this.boardingLocation = {
-      lng: Number(firstCoord[0]),
-      lat: Number(firstCoord[1])
-    };
-    
-    console.log('Boarding location set to:', this.boardingLocation);
-    
-    // Validate boarding location
-    if (isNaN(this.boardingLocation.lng) || isNaN(this.boardingLocation.lat)) {
-      console.error('Invalid boarding location coordinates!');
-      return;
-    }
-    
-    this.currentBusPosition = { ...this.boardingLocation };
-    this.distanceTraveled = 0;
-    this.ticketFare = 0; 
-    this.isSimulationActive = true;
-
-    console.log('Starting bus simulation from:', this.boardingLocation);
-    console.log('Route has', coords.length, 'coordinate points');
-    console.log('First 3 coords:', coords.slice(0, 3));
-
-    // Simulate bus movement at realistic speed (updates every 2 seconds)
-    // Realistic bus speed: 50 km/h ≈ 28 meters per 2 seconds
-    // Get total distance from Mapbox (already calculated and stored)
-    const totalDistance = this.selectedRoute.distance_km || 0;
-    const totalSteps = coords.length;
-    
-    console.log(`Route total distance from Mapbox: ${totalDistance} km, Total steps: ${totalSteps}`);
-
-    this.busSimulationSubscription = this.busSimulator
-      .simulateAlongLine(coords, 2000) // Update every 2 seconds
-      .subscribe({
-        next: (position) => {
-          console.log('Received position from simulator:', position);
-          
-          // Validate position has valid lng/lat
-          if (!position || position.lng === undefined || position.lat === undefined || 
-              isNaN(position.lng) || isNaN(position.lat)) {
-            console.error('Invalid position from simulator:', position);
-            return;
-          }
-          
-          this.currentBusPosition = {
-            lng: Number(position.lng),
-            lat: Number(position.lat)
-          };
-
-          // Calculate distance traveled based on progress along route
-          // Use Mapbox distance and interpolate based on position index
-          if (totalDistance > 0 && totalSteps > 0) {
-            const progress = position.index / totalSteps; // 0 to 1
-            this.distanceTraveled = totalDistance * progress;
-            
-            console.log(`Bus at step ${position.index}/${totalSteps}: Distance traveled = ${this.distanceTraveled.toFixed(2)} km (${(progress * 100).toFixed(1)}% of route)`);
-          }
-        },
-        error: (err) => {
-          console.error('Bus simulation error:', err);
-          this.stopBusSimulation();
-        }
+  addTicket() {
+    if (this.ticketName && this.validUntil) {
+      this.ticket.push({
+        name: this.ticketName,
+        validUntil: this.validUntil
       });
-  }
-
-  /**
-   * Stop the bus simulation
-   */
-  private stopBusSimulation() {
-    if (this.busSimulationSubscription) {
-      this.busSimulationSubscription.unsubscribe();
-      this.busSimulationSubscription = null;
+      this.ticketName = '';
+      this.validUntil = '';
     }
-    this.isSimulationActive = false;
-    console.log('Bus simulation stopped');
   }
-
-
-
-  /**
-   * Get formatted distance traveled string
-   */
-  getDistanceTraveled(): string {
-    // Handle null, undefined, NaN, or 0
-    if (!this.distanceTraveled || this.distanceTraveled === 0 || isNaN(this.distanceTraveled)) {
-      return '0.0 km';
+  viewTicket() {
+    // Logic to view ticket details
+    console.log('Viewing ticket:', this.ticket);
+  }
+  removeTicket(index: number) {
+    this.ticket.splice(index, 1);
+  }
+  getTicketIcon(ticketName: string): string {
+    switch (ticketName.toLowerCase()) {
+      case 'single ride':
+        return 'bus-outline';
+      case 'day pass':
+        return 'calendar-outline';
+      case 'monthly pass':
+        return 'calendar-number-outline';
+      default:
+        return 'ticket-outline';
     }
-    return `${this.distanceTraveled.toFixed(1)} km`;
+  }
+activateTicket(ticket: any) {
+    
+
+    console.log(`Activating ticket: ${ticket.name}`);
+    
+}
+getRecentTrips() {
+    // Simulated recent trips data
+    this.recentTrips = [
+      { route: 'Route A', date: '2023-10-01', time: '08:30 AM' },
+      { route: 'Route B', date: '2023-10-02', time: '09:15 AM' },
+      { route: 'Route C', date: '2023-10-03', time: '07:45 AM' }
+    ];
   }
 
-  /**
-   * Get origin point from ticket destination
-   */
-  getOrigin(): string {
-    return this.ticketDestination ? this.ticketDestination.split(' to ')[0] || 'Start Point' : 'Start Point';
+  // Support Methods
+  async sendSupportMessage() {
+    if (this.supportMessage.trim()) {
+      console.log('Sending support message:', this.supportMessage);
+      
+      // Simulate sending message
+      const toast = await this.toastController.create({
+        message: 'Message sent! Our support team will respond shortly.',
+        duration: 3000,
+        color: 'success',
+        position: 'top'
+      });
+      await toast.present();
+      
+      this.supportMessage = '';
+    }
   }
 
-  /**
-   * Get destination point from ticket destination
-   */
-  getDestinationPoint(): string {
-    return this.ticketDestination ? this.ticketDestination.split(' to ')[1] || 'End Point' : 'End Point';
+  async connectToLiveAgent() {
+    console.log('Connecting to live agent...');
+    
+    const toast = await this.toastController.create({
+      message: 'Connecting you to a live agent. Please wait...',
+      duration: 3000,
+      color: 'primary',
+      position: 'top'
+    });
+    await toast.present();
+    
+    // In a real app, this would initiate a live chat or call
   }
 }

@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root' 
 })
 export class AuthService {  
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrl = `${environment.apiUrl}/commuters`;  // ✅ FIXED: /commuters not /auth
   private currentUser: any = null;
 
   constructor(private http: HttpClient) {
@@ -33,6 +33,45 @@ export class AuthService {
     return this.currentUser;
   }
 
+  async login(email: string, password: string): Promise<any> {
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post(`${this.apiUrl}/login`, { email, password })
+      );
+
+      if (response.token && response.user) {
+        this.currentUser = response.user;
+        localStorage.setItem('authToken', response.token);
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        return this.currentUser;
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
+    } catch (error: any) {
+      console.error('Login error:', error);
+      throw new Error(error.error?.message || 'Login failed. Please check your credentials.');
+    }
+  }
+
+  async register(first_name: string, last_name: string, email: string, password: string): Promise<any> {
+    try {
+      const response: any = await firstValueFrom(
+        this.http.post(`${this.apiUrl}/register`, { first_name, last_name, email, password })
+      );
+
+      if (response.success && response.data) {
+        this.currentUser = response.data;
+        localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+        return this.currentUser;
+      } else {
+        throw new Error(response.message || 'Registration failed');
+      }
+    } catch (error: any) {
+      console.error('Register error:', error);
+      throw new Error(error.error?.message || 'Registration failed. Please try again.');
+    }
+  }
+
   async updateUserProfile(profileData: any): Promise<boolean> {
     try {
       if (!this.currentUser) {
@@ -48,7 +87,7 @@ export class AuthService {
       // Try API update
       try {
         const response: any = await firstValueFrom(
-          this.http.put(`${this.apiUrl}/users/${userId}`, profileData)
+          this.http.put(`${this.apiUrl}/${userId}`, profileData)
         );
 
         if (response.success) {
@@ -82,7 +121,7 @@ export class AuthService {
       const userId = this.currentUser?.id || this.currentUser?._id;
       if (userId) {
         await firstValueFrom(
-          this.http.post(`${this.apiUrl}/logout`, {})
+          this.http.post(`${this.apiUrl}/${userId}/logout`, {})
         ).catch(err => console.warn('API logout failed:', err));
       }
     } catch (error) {

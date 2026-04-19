@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://semitextural-hyun-overpolemically.ngrok-free.dev/api', // Update with your production API
+  apiUrl: 'https://semitextural-hyun-overpolemically.ngrok-free.dev/api/v1', // Update with your production API
   ocrApiKey: 'K87693276688957',
   mapbox: {
     accessToken: 'pk.eyJ1Ijoic2Vlam83IiwiYSI6ImNtY3ZqcWJ1czBic3QycHEycnM0d2xtaXEifQ.DdQ8QFpf5LlgTDtejDgJSA'
