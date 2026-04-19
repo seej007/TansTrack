@@ -1,9 +1,0 @@
-# ngrok files
-*.log
-.env
-ngrok
-ngrok.exe
-
-# Auth tokens and sensitive data  
-authtoken.txt
-*.token
