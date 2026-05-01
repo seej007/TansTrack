@@ -8,20 +8,18 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.page').then(m => m.LoginPage)
+    loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule)
   },
   {
     path: 'register',
-    loadComponent: () => import('./register/register.page').then(m => m.RegisterPage)
-  },
- 
-  {
-    path: 'home',
-    loadChildren: () => import('./home/home.page').then(m => m.HomePage)
+    loadChildren: () => import('./register/register.module').then(m => m.RegisterPageModule)
   },
   {
-    path: '',
-    redirectTo: '/login',
-    pathMatch: 'full',
+    path: 'tabs',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsModule)
   },
+  {
+    path: '**',
+    redirectTo: 'login'
+  }
 ];

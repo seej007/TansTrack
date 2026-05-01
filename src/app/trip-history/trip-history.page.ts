@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { TripHistoryService } from '../services/trip-history.service';
 import { Subscription } from 'rxjs';
-import { ToastController, LoadingController, AlertController } from '@ionic/angular';
+import { ToastController, LoadingController, AlertController, ViewWillEnter } from '@ionic/angular';
 
 export interface Trip {
   id: string;
@@ -26,7 +26,7 @@ export interface Trip {
   styleUrls: ['./trip-history.page.scss'],
   standalone: false,
 })
-export class TripHistoryPage implements OnInit, OnDestroy {
+export class TripHistoryPage implements OnInit, OnDestroy, ViewWillEnter {
   trips: Trip[] = [];
   displayedTrips: Trip[] = [];
   selectedTrip: Trip | null = null;
@@ -45,7 +45,11 @@ export class TripHistoryPage implements OnInit, OnDestroy {
     private alertController: AlertController
   ) {}
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  ionViewWillEnter() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptions = [];
     this.loadTrips();
   }
 
@@ -64,14 +68,26 @@ export class TripHistoryPage implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response.success && response.data) {
           this.trips = response.data;
-          this.applyFiltersAndSort();
         }
+        // Merge any locally saved trips not already in the list
+        const localTrips = this.tripHistoryService.getLocalTripsSync();
+        const existingIds = new Set(this.trips.map((t: Trip) => t.id));
+        localTrips.forEach((t: any) => { if (!existingIds.has(t.id)) this.trips.push(t); });
+        this.applyFiltersAndSort();
         this.isLoading = false;
         loading.dismiss();
       },
-      error: (error) => {
-        console.error('Error loading trips:', error);
-        this.showToast('Failed to load trip history', 'danger');
+      error: () => {
+        // API unavailable — show locally saved trips
+        const localSub = this.tripHistoryService.getLocalTrips().subscribe({
+          next: (response: any) => {
+            if (response.success && response.data) {
+              this.trips = response.data;
+              this.applyFiltersAndSort();
+            }
+          }
+        });
+        this.subscriptions.push(localSub);
         this.isLoading = false;
         loading.dismiss();
       }

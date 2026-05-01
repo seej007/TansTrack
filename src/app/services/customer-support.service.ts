@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -110,5 +110,36 @@ export class CustomerSupportService {
       `${this.apiUrl}/support/categories`,
       { headers: this.getHeaders() }
     );
+  }
+
+  // Local storage fallbacks
+  saveLocalTicket(ticket: any): void {
+    const tickets = this.getLocalTicketsSync();
+    tickets.unshift(ticket);
+    localStorage.setItem('localSupportTickets', JSON.stringify(tickets));
+  }
+
+  getLocalTicketsSync(): any[] {
+    try {
+      const stored = localStorage.getItem('localSupportTickets');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  getLocalTickets(): Observable<any> {
+    return of({ success: true, data: this.getLocalTicketsSync() });
+  }
+
+  getDefaultFAQs(): any[] {
+    return [
+      { id: 'faq-1', question: 'How do I generate an e-Ticket?', answer: 'Select a route from the Home tab, then tap "Get e-Ticket". Your ticket will show fare details and payment options.', category: 'tickets', helpful: 0 },
+      { id: 'faq-2', question: 'What payment methods are accepted?', answer: 'Cash (pay the conductor directly), PayMaya, or GCash. Select your method inside the e-Ticket before boarding.', category: 'payment', helpful: 0 },
+      { id: 'faq-3', question: 'How does the 20% discount work?', answer: 'A 20% discount is automatically applied when your passenger type is set to PWD, Senior, or Student in your profile.', category: 'fares', helpful: 0 },
+      { id: 'faq-4', question: 'How do I verify my ID for a discount?', answer: 'Go to your Profile tab, set your passenger type, then tap the ID scanner button to verify your ID.', category: 'account', helpful: 0 },
+      { id: 'faq-5', question: 'How do I check my trip history?', answer: 'Switch to the Trips tab to view all your past journeys. Trips are saved automatically when you close a ticket.', category: 'general', helpful: 0 },
+      { id: 'faq-6', question: 'Can I use the app without internet?', answer: 'Trip history and support tickets are stored on your device. Live route tracking and fare calculation require internet.', category: 'general', helpful: 0 }
+    ];
   }
 }

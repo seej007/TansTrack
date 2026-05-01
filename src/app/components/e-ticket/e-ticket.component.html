@@ -43,11 +43,16 @@
             </div>
 
             <!-- QR Code Section -->
-            <div class="ticket-section qr-section">
+            <div class="ticket-section qr-section" *ngIf="paymentMethod !== 'cash'">
               <div class="qr-code-placeholder">
-                <ion-icon name="qr-code" style="font-size: 80px; color: #000;"></ion-icon>
-                <div style="font-size: 12px; color: #666; margin-top: 8px;">Scan to validate ticket</div>
+                <img src="assets/qrcode.png" alt="Ticket QR Code" class="qr-image" />
+                <div class="qr-label">Scan to validate ticket</div>
               </div>
+            </div>
+
+            <div class="ticket-section cash-notice" *ngIf="paymentMethod === 'cash'">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span>Please Pay the conductor directly</span>
             </div>
 
             <!-- Ticket Details -->

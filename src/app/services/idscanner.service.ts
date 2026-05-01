@@ -175,7 +175,7 @@ export class IdVerificationService {
       
       const updatedUser = {
         ...currentUser,
-        passengerType: verificationType === 'pwd' ? 'PWD' : 'Senior',
+        passengerType: verificationType === 'pwd' ? 'PWD' : verificationType === 'student' ? 'Student' : 'Senior',
         idVerified: true,
         idNumber: idNumber
       };

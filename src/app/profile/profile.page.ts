@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-profile',
@@ -55,14 +55,18 @@ export class ProfilePage implements OnInit {
       const currentUser = await this.authService.getCurrentUser();
       
       if (currentUser) {
+        const fullName = currentUser.name
+          || currentUser.fullName
+          || `${currentUser.first_name || ''} ${currentUser.last_name || ''}`.trim()
+          || '';
         this.userProfile = {
           id: currentUser.id || currentUser._id || '',
-          name: currentUser.name || currentUser.fullName || '',
+          name: fullName,
           email: currentUser.email || '',
           phone: currentUser.phone || currentUser.phoneNumber || '',
-          passengerType: currentUser.passengerType || currentUser.userType || 'PWD',
-          idVerified: currentUser.idVerified || false,
-          idNumber: currentUser.idNumber || null
+          passengerType: currentUser.passengerType || currentUser.passenger_type || currentUser.userType || 'Regular',
+          idVerified: currentUser.idVerified ?? currentUser.id_verified ?? false,
+          idNumber: currentUser.idNumber || currentUser.id_number || null
         };
       } else {
         // No user logged in, redirect to login
@@ -90,8 +94,19 @@ export class ProfilePage implements OnInit {
     }
   }
 
+  private isStudentEmail(email: string): boolean {
+    const domain = email.split('@')[1]?.toLowerCase() || '';
+    return domain.endsWith('.edu.ph') || domain.endsWith('.edu');
+  }
+
   async saveProfile() {
     try {
+      // Auto-verify student if school email is entered
+      if (this.isStudentEmail(this.userProfile.email) && !this.userProfile.idVerified) {
+        this.userProfile.passengerType = 'Student';
+        this.userProfile.idVerified = true;
+      }
+
       // Update via AuthService/API
       const updated = await this.authService.updateUserProfile({
         name: this.userProfile.name,
@@ -104,10 +119,14 @@ export class ProfilePage implements OnInit {
 
       if (updated) {
         this.isEditing = false;
-        
+
+        const message = this.userProfile.passengerType === 'Student' && this.userProfile.idVerified
+          ? 'Profile updated! Student discount applied via school email.'
+          : 'Profile updated successfully';
+
         const toast = await this.toastController.create({
-          message: 'Profile updated successfully',
-          duration: 2000,
+          message,
+          duration: 3000,
           color: 'success',
           position: 'bottom'
         });

@@ -55,16 +55,14 @@ export class MapPage implements OnInit, OnDestroy {
   }
 
   initializeMap() {
+    (mapboxgl as any).workerUrl = '/assets/mapbox-gl-csp-worker.js';
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: [123.920994, 10.311008], // Cebu North Bus Terminal (SM City)
       zoom: 12,
       trackResize: true
     });
-    
-    // Disable Mapbox telemetry/analytics events
-    (this.map as any)._requestManager._skuToken = '';
 
     // Mapbox GeolocateControl for real-time location tracking
     const geolocateControl = new mapboxgl.GeolocateControl({

@@ -4,12 +4,15 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.page.html',
   styleUrls: ['./register.page.scss'],
-  standalone: false
+  standalone: false,
+  
 })
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
@@ -27,21 +30,20 @@ export class RegisterPage implements OnInit {
     private toastCtrl: ToastController
   ) {
     this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      middleName: [''],
       email: ['', [Validators.required, Validators.email]],
+      address: ['', Validators.required],
+      contactNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      gender: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(8), this.passwordStrengthValidator]],
       confirmPassword: ['', [Validators.required]],
       terms: [false, Validators.requiredTrue]
     }, { validators: this.passwordMatchValidator });
   }
 
-  ngOnInit() {
-    this.authService.getCurrentUser().then(user => {
-      if (user) {
-        this.router.navigate(['/home']);
-      }
-    });
-  }
+  ngOnInit() {}
 
   passwordStrengthValidator(control: any) {
     const password = control.value;
@@ -74,8 +76,15 @@ export class RegisterPage implements OnInit {
     await loading.present();
 
     try {
-      const { name, email, password } = this.registerForm.value;
-await this.authService.register(this.registerForm.value.first_name, this.registerForm.value.last_name, email, password);
+      const { firstName, lastName, email, password, confirmPassword, contactNumber } = this.registerForm.value;
+      await this.authService.register(
+        firstName,
+        lastName,
+        email,
+        contactNumber,
+        password,
+        confirmPassword
+      );
       await loading.dismiss();
       
       const toast = await this.toastCtrl.create({
@@ -109,5 +118,12 @@ await this.authService.register(this.registerForm.value.first_name, this.registe
 
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  middleInitial(middleIn: 'middleName'):string{
+    if (middleIn === 'middleName') {
+      return this.registerForm.value.middleName ? this.registerForm.value.middleName.charAt(0).toUpperCase() + '.' : '';
+    }
+    return '';
   }
 }

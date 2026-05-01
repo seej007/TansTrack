@@ -5,292 +5,157 @@
 5    android:versionName="1.0" >
 6
 7    <uses-sdk
-8        android:minSdkVersion="26"
+8        android:minSdkVersion="23"
 9        android:targetSdkVersion="35" />
 10
 11    <!-- Permissions -->
 12
 13    <uses-permission android:name="android.permission.INTERNET" />
-13-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:40:5-67
-13-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:40:22-64
-14
-15    <!-- Location Permissions for GPS tracking -->
-16    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-16-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:43:5-81
-16-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:43:22-78
-17    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-17-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:44:5-79
-17-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:44:22-76
-18
-19    <!-- Optional: Background location (if you want to track location when app is in background) -->
-20    <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
+13-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:41:5-67
+13-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:41:22-64
+14    <uses-permission android:name="android.permission.VIBRATE" />
+14-->[:capacitor-haptics] C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\node_modules\@capacitor\haptics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-66
+14-->[:capacitor-haptics] C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\node_modules\@capacitor\haptics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:22-63
+15
+16    <permission
+16-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
+17        android:name="io.ionic.starter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="io.ionic.starter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
 21
-22
-23    <!-- Feature declaration -->
-24    <uses-feature
-24-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:50:5-91
-25        android:name="android.hardware.location.gps"
-25-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:50:19-63
-26        android:required="false" />
-26-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:50:64-88
-27    <uses-feature
-27-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:51:5-95
-28        android:name="android.hardware.location.network"
-28-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:51:19-67
-29        android:required="false" />
-29-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:51:68-92
-30
-31    <uses-permission android:name="android.permission.VIBRATE" /> <!-- Permissions for webcam websites and such, for WebView -->
-31-->[:capacitor-haptics] C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\node_modules\@capacitor\haptics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:5-66
-31-->[:capacitor-haptics] C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\node_modules\@capacitor\haptics\android\build\intermediates\merged_manifest\debug\processDebugManifest\AndroidManifest.xml:7:22-63
-32    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-32-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:10:5-71
-32-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:10:22-68
-33    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-33-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:11:5-80
-33-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:11:22-77
-34    <uses-permission android:name="android.permission.CAMERA" />
-34-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:12:5-65
-34-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:12:22-62
-35
-36    <queries>
-36-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:17:5-35:15
-37        <intent>
-37-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:18:9-24:18
-38            <action android:name="android.intent.action.VIEW" />
-38-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:19:13-65
-38-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:19:21-62
-39
-40            <category android:name="android.intent.category.BROWSABLE" />
-40-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:21:13-74
-40-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:21:23-71
-41
-42            <data android:scheme="http" />
-42-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:23:13-43
-42-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:23:19-40
-43        </intent>
-44        <intent>
-44-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:25:9-31:18
-45            <action android:name="android.intent.action.VIEW" />
-45-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:19:13-65
-45-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:19:21-62
-46
-47            <category android:name="android.intent.category.BROWSABLE" />
-47-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:21:13-74
-47-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:21:23-71
-48
-49            <data android:scheme="https" />
-49-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:23:13-43
-49-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:23:19-40
-50        </intent>
-51        <intent>
-51-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:32:9-34:18
-52            <action android:name="android.support.customtabs.action.CustomTabsService" />
-52-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:33:13-90
-52-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:33:21-87
-53        </intent>
-54    </queries>
-55
-56    <permission
-56-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:22:5-24:47
-57        android:name="io.ionic.starter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-57-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:23:9-81
-58        android:protectionLevel="signature" />
-58-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:24:9-44
-59
-60    <uses-permission android:name="io.ionic.starter.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-60-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:26:5-97
-60-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:26:22-94
-61
-62    <application
-62-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:4:5-36:19
-63        android:allowBackup="true"
-63-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:5:9-35
-64        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-64-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\0b5ab4957e0d9201dc0e34b2e70d1e62\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
-65        android:debuggable="true"
-66        android:extractNativeLibs="false"
-67        android:icon="@mipmap/ic_launcher"
-67-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:6:9-43
-68        android:label="@string/app_name"
-68-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:7:9-41
-69        android:roundIcon="@mipmap/ic_launcher_round"
-69-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:8:9-54
-70        android:supportsRtl="true"
-70-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:9:9-35
-71        android:testOnly="true"
-72        android:theme="@style/AppTheme" >
-72-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:10:9-40
-73        <activity
-73-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:12:9-25:20
-74            android:name="io.ionic.starter.MainActivity"
-74-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:14:13-41
-75            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
-75-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:13:13-140
+22    <application
+22-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:4:5-37:19
+23        android:allowBackup="true"
+23-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:5:9-35
+24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+24-->[androidx.core:core:1.15.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\5f51ed623ec66baebfa6a053fe8a8b2a\transformed\core-1.15.0\AndroidManifest.xml:28:18-86
+25        android:debuggable="true"
+26        android:extractNativeLibs="false"
+27        android:icon="@mipmap/ic_launcher"
+27-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:6:9-43
+28        android:label="@string/app_name"
+28-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:7:9-41
+29        android:roundIcon="@mipmap/ic_launcher_round"
+29-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:8:9-54
+30        android:supportsRtl="true"
+30-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:9:9-35
+31        android:testOnly="true"
+32        android:theme="@style/AppTheme"
+32-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:11:9-40
+33        android:usesCleartextTraffic="true" >
+33-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:10:9-44
+34        <activity
+34-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:13:9-26:20
+35            android:name="io.ionic.starter.MainActivity"
+35-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:15:13-41
+36            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode|navigation"
+36-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:14:13-140
+37            android:exported="true"
+37-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:19:13-36
+38            android:label="@string/title_activity_main"
+38-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:16:13-56
+39            android:launchMode="singleTask"
+39-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:18:13-44
+40            android:theme="@style/AppTheme.NoActionBarLaunch" >
+40-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:17:13-62
+41            <intent-filter>
+41-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:21:13-24:29
+42                <action android:name="android.intent.action.MAIN" />
+42-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:22:17-69
+42-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:22:25-66
+43
+44                <category android:name="android.intent.category.LAUNCHER" />
+44-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:23:17-77
+44-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:23:27-74
+45            </intent-filter>
+46        </activity>
+47
+48        <provider
+49            android:name="androidx.core.content.FileProvider"
+49-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:29:13-62
+50            android:authorities="io.ionic.starter.fileprovider"
+50-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:30:13-64
+51            android:exported="false"
+51-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:31:13-37
+52            android:grantUriPermissions="true" >
+52-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:32:13-47
+53            <meta-data
+53-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:33:13-35:64
+54                android:name="android.support.FILE_PROVIDER_PATHS"
+54-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:34:17-67
+55                android:resource="@xml/file_paths" />
+55-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:35:17-51
+56        </provider>
+57        <provider
+57-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+58            android:name="androidx.startup.InitializationProvider"
+58-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+59            android:authorities="io.ionic.starter.androidx-startup"
+59-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+60            android:exported="false" >
+60-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+61            <meta-data
+61-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+62                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+62-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+63                android:value="androidx.startup" />
+63-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\455628e39230ce08b70f281b4ac99c3c\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+64            <meta-data
+64-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\usern\.gradle\caches\8.11.1\transforms\2086035d7e747a32c2be40e6ed7f404e\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+65                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+65-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\usern\.gradle\caches\8.11.1\transforms\2086035d7e747a32c2be40e6ed7f404e\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+66                android:value="androidx.startup" />
+66-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\usern\.gradle\caches\8.11.1\transforms\2086035d7e747a32c2be40e6ed7f404e\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+67            <meta-data
+67-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+68                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+68-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+69                android:value="androidx.startup" />
+69-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+70        </provider>
+71
+72        <receiver
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+73            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+73-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+74            android:directBootAware="false"
+74-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+75            android:enabled="true"
+75-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
 76            android:exported="true"
-76-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:18:13-36
-77            android:label="@string/title_activity_main"
-77-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:15:13-56
-78            android:launchMode="singleTask"
-78-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:17:13-44
-79            android:theme="@style/AppTheme.NoActionBarLaunch" >
-79-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:16:13-62
-80            <intent-filter>
-80-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:20:13-23:29
-81                <action android:name="android.intent.action.MAIN" />
-81-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:21:17-69
-81-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:21:25-66
-82
-83                <category android:name="android.intent.category.LAUNCHER" />
-83-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:22:17-77
-83-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:22:27-74
-84            </intent-filter>
-85        </activity>
-86
-87        <provider
-88            android:name="androidx.core.content.FileProvider"
-88-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:28:13-62
-89            android:authorities="io.ionic.starter.fileprovider"
-89-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:29:13-64
-90            android:exported="false"
-90-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:30:13-37
-91            android:grantUriPermissions="true" >
-91-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:31:13-47
-92            <meta-data
-92-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:32:13-34:64
-93                android:name="android.support.FILE_PROVIDER_PATHS"
-93-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:33:17-67
-94                android:resource="@xml/file_paths" />
-94-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:34:17-51
-95        </provider>
-96
-97        <activity
-97-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:38:9-45:36
-98            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.views.OSIABWebViewActivity"
-98-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:39:13-108
-99            android:configChanges="orientation|screenSize|uiMode"
-99-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:40:13-66
-100            android:enableOnBackInvokedCallback="true"
-100-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:41:13-55
-101            android:exported="false"
-101-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:42:13-37
-102            android:label="OSIABWebViewActivity"
-102-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:43:13-49
-103            android:theme="@style/AppTheme.WebView" />
-103-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:44:13-52
-104        <activity
-104-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:46:9-52:73
-105            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.views.OSIABCustomTabsControllerActivity"
-105-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:47:13-121
-106            android:excludeFromRecents="true"
-106-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:48:13-46
-107            android:exported="false"
-107-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:49:13-37
-108            android:launchMode="singleTask"
-108-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:50:13-44
-109            android:theme="@style/Theme.Transparent"
-109-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:51:13-53
-110            android:windowSoftInputMode="stateAlwaysHidden|adjustPan" /> <!-- Used for when taking photos/videos when uploading files through WebChromeClient.onShowFileChooser -->
-110-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:52:13-70
-111        <provider
-111-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:55:9-63:20
-112            android:name="com.outsystems.plugins.inappbrowser.osinappbrowserlib.FileProvider"
-112-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:56:13-94
-113            android:authorities="io.ionic.starter.fileprovider"
-113-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:57:13-64
-114            android:exported="false"
-114-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:58:13-37
-115            android:grantUriPermissions="true" >
-115-->[io.ionic.libs:ioninappbrowser-android:1.6.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\ac59f683cf670e1278a66c5b84f6ca24\transformed\ioninappbrowser-android-1.6.0\AndroidManifest.xml:59:13-47
-116            <meta-data
-116-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:32:13-34:64
-117                android:name="android.support.FILE_PROVIDER_PATHS"
-117-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:33:17-67
-118                android:resource="@xml/file_paths" />
-118-->C:\Users\usern\Downloads\TransitTrackSys\TansTrack\Commuters\android\app\src\main\AndroidManifest.xml:34:17-51
-119        </provider>
-120
-121        <activity
-121-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\9df83a11ec5a4c991c1a3f756db1254f\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:9-173
-122            android:name="com.google.android.gms.common.api.GoogleApiActivity"
-122-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\9df83a11ec5a4c991c1a3f756db1254f\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:19-85
-123            android:exported="false"
-123-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\9df83a11ec5a4c991c1a3f756db1254f\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:146-170
-124            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-124-->[com.google.android.gms:play-services-base:18.5.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\9df83a11ec5a4c991c1a3f756db1254f\transformed\play-services-base-18.5.0\AndroidManifest.xml:5:86-145
-125
-126        <provider
-126-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
-127            android:name="androidx.startup.InitializationProvider"
-127-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
-128            android:authorities="io.ionic.starter.androidx-startup"
-128-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
-129            android:exported="false" >
-129-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
-130            <meta-data
-130-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
-131                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-131-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
-132                android:value="androidx.startup" />
-132-->[androidx.emoji2:emoji2:1.3.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\4c8e646ea73ae89ab8a95df5ac4d98a3\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
-133            <meta-data
-133-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\usern\.gradle\caches\8.11.1\transforms\42f9001af0d5ac560c5ab9a4ed7e2a2c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:29:13-31:52
-134                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-134-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\usern\.gradle\caches\8.11.1\transforms\42f9001af0d5ac560c5ab9a4ed7e2a2c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:30:17-78
-135                android:value="androidx.startup" />
-135-->[androidx.lifecycle:lifecycle-process:2.8.7] C:\Users\usern\.gradle\caches\8.11.1\transforms\42f9001af0d5ac560c5ab9a4ed7e2a2c\transformed\lifecycle-process-2.8.7\AndroidManifest.xml:31:17-49
-136            <meta-data
-136-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:29:13-31:52
-137                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-137-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:30:17-85
-138                android:value="androidx.startup" />
-138-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:31:17-49
-139        </provider>
-140
-141        <meta-data
-141-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\fca872395773d32edb2595cfda0f00ab\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:9-122
-142            android:name="com.google.android.gms.version"
-142-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\fca872395773d32edb2595cfda0f00ab\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:20-65
-143            android:value="@integer/google_play_services_version" />
-143-->[com.google.android.gms:play-services-basement:18.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\fca872395773d32edb2595cfda0f00ab\transformed\play-services-basement-18.4.0\AndroidManifest.xml:6:66-119
-144
-145        <receiver
-145-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:34:9-52:20
-146            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-146-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:35:13-76
-147            android:directBootAware="false"
-147-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:36:13-44
-148            android:enabled="true"
-148-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:37:13-35
-149            android:exported="true"
-149-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:38:13-36
-150            android:permission="android.permission.DUMP" >
-150-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:39:13-57
-151            <intent-filter>
-151-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:40:13-42:29
-152                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-152-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:17-91
-152-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:41:25-88
-153            </intent-filter>
-154            <intent-filter>
-154-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:43:13-45:29
-155                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-155-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:17-85
-155-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:44:25-82
-156            </intent-filter>
-157            <intent-filter>
-157-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:46:13-48:29
-158                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-158-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:17-88
-158-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:47:25-85
-159            </intent-filter>
-160            <intent-filter>
-160-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:49:13-51:29
-161                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-161-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:17-95
-161-->[androidx.profileinstaller:profileinstaller:1.4.0] C:\Users\usern\.gradle\caches\8.11.1\transforms\62d78b43c8af47aaf4a1065442e00468\transformed\profileinstaller-1.4.0\AndroidManifest.xml:50:25-92
-162            </intent-filter>
-163        </receiver>
-164    </application>
-165
-166</manifest>
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+77            android:permission="android.permission.DUMP" >
+77-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+78            <intent-filter>
+78-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+79                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+80            </intent-filter>
+81            <intent-filter>
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+82                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+83            </intent-filter>
+84            <intent-filter>
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+85                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+86            </intent-filter>
+87            <intent-filter>
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+88                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\usern\.gradle\caches\8.11.1\transforms\0f3d68271fd414f74f11a6a9c308b287\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+89            </intent-filter>
+90        </receiver>
+91    </application>
+92
+93</manifest>

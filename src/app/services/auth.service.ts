@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -39,24 +39,49 @@ export class AuthService {
         this.http.post(`${this.apiUrl}/login`, { email, password })
       );
 
-      if (response.token && response.user) {
-        this.currentUser = response.user;
-        localStorage.setItem('authToken', response.token);
+      if (response.success && response.data) {
+        this.currentUser = response.data;
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
         return this.currentUser;
       } else {
         throw new Error(response.message || 'Login failed');
       }
     } catch (error: any) {
+      if (error instanceof Error && !error.message.includes('Http')) {
+        throw error;
+      }
       console.error('Login error:', error);
       throw new Error(error.error?.message || 'Login failed. Please check your credentials.');
     }
   }
 
-  async register(first_name: string, last_name: string, email: string, password: string): Promise<any> {
+  async register(
+    first_name: string,
+    last_name: string,
+    email: string,
+    phone: string,
+    password: string,
+    passwordConfirmation: string
+  ): Promise<any> {
     try {
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        Accept: 'application/json'
+      });
+
       const response: any = await firstValueFrom(
-        this.http.post(`${this.apiUrl}/register`, { first_name, last_name, email, password })
+        this.http.post(
+          `${this.apiUrl}/register`,
+          {
+            first_name,
+            last_name,
+            email,
+            phone,
+            password,
+            password_confirmation: passwordConfirmation
+          },
+          { headers }
+        )
       );
 
       if (response.success && response.data) {
@@ -87,7 +112,7 @@ export class AuthService {
       // Try API update
       try {
         const response: any = await firstValueFrom(
-          this.http.put(`${this.apiUrl}/${userId}`, profileData)
+          this.http.put(`${this.apiUrl}/${userId}/profile`, profileData)
         );
 
         if (response.success) {

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CustomerSupportService } from '../services/customer-support.service';
 import { Subscription } from 'rxjs';
-import { ToastController, LoadingController, AlertController } from '@ionic/angular';
+import { ToastController, LoadingController, ViewWillEnter } from '@ionic/angular';
 
 export interface SupportTicket {
   id: string;
@@ -38,7 +38,7 @@ export interface FAQItem {
   styleUrls: ['./customer-support.page.scss'],
   standalone: false,
 })
-export class CustomerSupportPage implements OnInit, OnDestroy {
+export class CustomerSupportPage implements OnInit, OnDestroy, ViewWillEnter {
   // UI State
   activeTab: string = 'support'; // 'support', 'faq', 'contact'
   
@@ -97,13 +97,15 @@ export class CustomerSupportPage implements OnInit, OnDestroy {
   constructor(
     private supportService: CustomerSupportService,
     private toastController: ToastController,
-    private loadingController: LoadingController,
-    private alertController: AlertController
+    private loadingController: LoadingController
   ) {}
 
   ngOnInit() {
-    this.loadTickets();
     this.loadFAQs();
+  }
+
+  ionViewWillEnter() {
+    this.loadTickets();
   }
 
   ngOnDestroy() {
@@ -121,14 +123,17 @@ export class CustomerSupportPage implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response.success && response.data) {
           this.tickets = response.data;
-          this.applyTicketFilter();
         }
+        const localTickets = this.supportService.getLocalTicketsSync();
+        const existingIds = new Set(this.tickets.map((t: SupportTicket) => t.id));
+        localTickets.forEach((t: any) => { if (!existingIds.has(t.id)) this.tickets.push(t); });
+        this.applyTicketFilter();
         this.isLoadingTickets = false;
         loading.dismiss();
       },
-      error: (error: any) => {
-        console.error('Error loading tickets:', error);
-        this.showToast('Failed to load support tickets', 'danger');
+      error: () => {
+        this.tickets = this.supportService.getLocalTicketsSync();
+        this.applyTicketFilter();
         this.isLoadingTickets = false;
         loading.dismiss();
       }
@@ -142,10 +147,12 @@ export class CustomerSupportPage implements OnInit, OnDestroy {
       next: (response: any) => {
         if (response.success && response.data) {
           this.faqs = response.data;
+        } else {
+          this.faqs = this.supportService.getDefaultFAQs();
         }
       },
-      error: (error: any) => {
-        console.error('Error loading FAQs:', error);
+      error: () => {
+        this.faqs = this.supportService.getDefaultFAQs();
       }
     });
 
@@ -189,37 +196,24 @@ export class CustomerSupportPage implements OnInit, OnDestroy {
     }
 
     this.isSubmitting = true;
-    const loading = await this.loadingController.create({
-      message: 'Creating support ticket...'
-    });
-    await loading.present();
-
-    const ticketData = {
+    const now = new Date().toISOString();
+    const ticket: SupportTicket = {
+      id: 'TKT-' + Date.now().toString(36).toUpperCase(),
       subject: this.newTicket.subject,
       description: this.newTicket.description,
       category: this.newTicket.category,
-      priority: this.newTicket.priority
+      priority: this.newTicket.priority,
+      status: 'open',
+      createdDate: now,
+      lastUpdated: now,
+      responses: []
     };
 
-    const sub = this.supportService.createTicket(ticketData).subscribe({
-      next: (response: any) => {
-        if (response.success) {
-          this.showToast('Support ticket created successfully!', 'success');
-          this.closeNewTicketForm();
-          this.loadTickets();
-        }
-        this.isSubmitting = false;
-        loading.dismiss();
-      },
-      error: (error: any) => {
-        console.error('Error creating ticket:', error);
-        this.showToast('Failed to create support ticket', 'danger');
-        this.isSubmitting = false;
-        loading.dismiss();
-      }
-    });
-
-    this.subscriptions.push(sub);
+    this.supportService.saveLocalTicket(ticket);
+    this.showToast('Support ticket created successfully!', 'success');
+    this.closeNewTicketForm();
+    this.loadTickets();
+    this.isSubmitting = false;
   }
 
   selectTicket(ticket: SupportTicket) {

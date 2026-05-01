@@ -1,429 +1,299 @@
-#container {
-  text-align: center;
+// ── Variables ──────────────────────────────────────────────
+$blue:        #0054e9;
+$blue-dark:   #0040b0;
+$blue-light:  #e8f0fe;
+$white:       #ffffff;
+$text:        #1a1a2e;
+$text-muted:  #6b7280;
+$border:      #e5e7eb;
+$shadow:      0 2px 12px rgba(0, 84, 233, 0.08);
+$radius:      14px;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+// ── Page background ────────────────────────────────────────
+ion-content {
+  --background: #f0f4ff;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
-}
-#container a:hover {
-  text-decoration: underline;
-}
-.Balance-content {
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 10px;
+// ── Profile icon in toolbar ────────────────────────────────
+.profile-icon {
+  font-size: 28px;
   color: white;
 }
 
-.Balance-card {
+// ── Hero Banner ────────────────────────────────────────────
+.hero-banner {
+  background: linear-gradient(135deg, $blue 0%, $blue-dark 100%);
+  padding: 24px 20px 28px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-radius: 10px;
-}
-.Balance-icon{
-  font-size: 40px;
-}
-h2 {
-  font-size: 24px;
-  margin: 15px 0;
-}
-.ticket-card {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 10px;
-}
-ion-item{
-  --background: transparent;
-  --color: #333;
-  --padding-start: 1;
-  --padding-end: 1;
-}
-.status{
-  font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 5px;
-  position: absolute;
-  top: 16px;
-  right: 16px;  
-}
-.ticket-header {
-  border-radius: 10px 10px 0 0;
-  padding: 0;
-}
-.origin-select {
-  padding: 0 10px;
-  border: #333 solid 1px;
-  border-radius: 9px;
-}
-.destination-select {
-  padding: 0 10px;
-  border: #333 solid 1px;
-  margin-top: 10px;
-  border-radius: 9px;
-}
-.quick-book-header{
-  color: #333;
-  padding: 0;
-  margin: 0 0 0 13px;
-}
-// .book-now-btn{
-//   background-color: #0054e9;
-//   color: white;
-//   border: none;
-//   padding: 10px 20px;
-//   border-radius: 5px;
-//   cursor: pointer;
-// }
-.quick-book-card{
-  ion-button {
-    --background: #0054e9;
-    --color: white;
-    --border-radius: 10px;
-    --padding-start: 10px;
-    --padding-end: 10px;
-    --fill: none;
+  justify-content: space-between;
+  color: white;
+
+  .hero-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    .hero-bus-icon {
+      font-size: 44px;
+      opacity: 0.95;
+    }
+
+    h1 {
+      margin: 0 0 2px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+  }
+
+  .hero-time {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 0.9;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(4px);
   }
 }
-.discount-card{
-  padding: 0;
-  border-radius: 10px;
-  margin-top: 20px;
-h2{
-  color: #333;
+
+// ── Section wrapper ────────────────────────────────────────
+.section-wrapper {
+  padding: 16px 16px 0;
 }
-  div{
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $blue;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+
+// ── Route Selection Card ───────────────────────────────────
+.route-card,
+.routes-card {
+  background: $white;
+  border-radius: $radius;
+  padding: 18px;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+}
+
+.route-select {
+  --background: $blue-light;
+  --border-radius: 10px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  border: 1.5px solid darken($blue-light, 8%);
+  border-radius: 10px;
+  margin-bottom: 14px;
+  min-height: 52px;
+  font-weight: 500;
+  color: $text;
+}
+
+.track-btn {
+  --background: #{$blue};
+  --background-activated: #{$blue-dark};
+  --border-radius: 10px;
+  --box-shadow: 0 4px 12px rgba(0, 84, 233, 0.3);
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: none;
+  height: 48px;
+  margin-bottom: 14px;
+}
+
+// ── Route chips ────────────────────────────────────────────
+.route-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+
+    ion-icon {
+      font-size: 14px;
+    }
+
+    &.blue {
+      background: $blue-light;
+      color: $blue;
+    }
+
+    &.green {
+      background: #e6f9f0;
+      color: #16a34a;
+    }
+  }
+}
+
+// ── Map Card ───────────────────────────────────────────────
+.map-card {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+  overflow: hidden;
+
+  .map-header {
     display: flex;
-    padding: 10px;
     align-items: center;
     justify-content: space-between;
-    color: #333;
-  }
-  .off{
-    color: green;
-    font-weight: bold;
-    font-size: 16px;
-  }
-}
-.ticket-tabs{
-  display: flex;
-  gap: 8px;
-  margin-top: 15px;
-  padding: 0;
-}
-.tab-btn{
-  --padding-start: 12px;
-  --padding-end: 12px;
-  --padding-top: 6px;
-  --padding-bottom: 6px;
-  height: 32px;
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: none;
-  
-  &.active {
-    --background: var(--ion-color-primary);
-    --color: white;
-  }
-  
-  &:not(.active) {
-    --background: #f5f5f5;
-    --color: #666;
-  }
-}
+    padding: 14px 16px;
+    border-bottom: 1px solid $border;
 
-// My Tickets Card Styles
-.my-tickets-card {
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.tickets-header {
-  padding: 16px;
-  padding-bottom: 8px;
-  
-  ion-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 0;
-  }
-}
-
-.tickets-content {
-  padding: 0 16px 16px 16px;
-}
-
-.ticket-item {
-  background: white;
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid #f0f0f0;
-}
-
-.ticket-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 16px;
-}
-
-.ticket-route {
-  flex: 1;
-  
-  h2 {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin: 0 0 4px 0;
-  }
-  
-  .ticket-date {
-    font-size: 14px;
-    color: #666;
-    margin: 0;
-  }
-}
-
-.ticket-status {
-  ion-badge {
-    --background: var(--ion-color-primary);
-    --color: white;
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-}
-
-.ticket-details {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 20px;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
-
-.detail-item {
-  display: flex;
-  flex-direction: column;
-  
-  .detail-label {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 2px;
-  }
-  
-  .detail-value {
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-  }
-}
-
-.ticket-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
-  
-  ion-button {
-    --padding-start: 12px;
-    --padding-end: 12px;
-    --padding-top: 8px;
-    --padding-bottom: 8px;
-    height: auto;
-    font-size: 12px;
-    
-    ion-icon {
-      font-size: 16px;
-      margin-right: 4px;
-    }
-  }
-}
-.ticket-header{
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  width: 100%;
-}
-
-// Support Cards Styles
-.support-card {
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  
-  ion-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  ion-card-subtitle {
-    font-size: 14px;
-    color: #666;
-    margin-top: 4px;
-  }
-  
-  ion-accordion {
-    margin-bottom: 8px;
-    border-radius: 8px;
-    overflow: hidden;
-    
-    ion-item {
-      --background: #f8f9fa;
-      --color: #333;
-      font-weight: 500;
-    }
-  }
-}
-
-.chat-support-card {
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  
-  ion-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .chat-intro {
-    margin-bottom: 16px;
-    
-    p:first-child {
+    .map-title {
+      font-size: 15px;
       font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
+      color: $text;
     }
-    
-    p:last-child {
-      color: #666;
-      font-size: 14px;
-    }
-  }
-  
-  .quick-questions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-    
-    .question-btn {
-      --color: var(--ion-color-primary);
-      text-align: left;
-      justify-content: flex-start;
-      font-size: 14px;
-      height: auto;
-      padding: 8px 12px;
-    }
-  }
-  
-  .chat-input {
-    margin-bottom: 16px;
-    
-    ion-item {
-      --background: #f8f9fa;
-      --border-radius: 8px;
-      margin-bottom: 0;
-    }
-    
-    ion-button {
-      --padding-start: 12px;
-      --padding-end: 12px;
-    }
-  }
-  
-  .live-agent {
-    text-align: center;
-    padding-top: 16px;
-    border-top: 1px solid #f0f0f0;
-    
-    p {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 12px;
-    }
-    
-    ion-button {
-      --padding-start: 16px;
-      --padding-end: 16px;
-    }
-  }
-}
 
-.contact-card {
-  margin-top: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  
-  ion-card-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
+    .live-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: #e6f9f0;
+      color: #16a34a;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        background: #16a34a;
+        border-radius: 50%;
+        animation: pulse 1.8s infinite;
+      }
+    }
   }
-  
-  .contact-methods {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+
+  .full-map-container {
+    height: 380px;
+    overflow: hidden;
   }
-  
-  .contact-item {
+
+  .no-map-notice {
     display: flex;
     align-items: center;
-    gap: 16px;
-    
-    ion-icon {
-      font-size: 24px;
-      min-width: 24px;
+    gap: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: $text-muted;
+    background: #fafafa;
+    border-top: 1px solid $border;
+
+    ion-icon { font-size: 16px; }
+  }
+}
+
+// ── Fare row ───────────────────────────────────────────────
+.fare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 14px;
+  background: $blue-light;
+  border-radius: 10px;
+
+  .fare-info {
+    .fare-label {
+      margin: 0 0 2px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $text-muted;
+      font-weight: 600;
     }
-    
-    .contact-info {
+
+    .fare-value-row {
       display: flex;
-      flex-direction: column;
-      
-      .contact-label {
-        font-size: 12px;
-        color: #888;
-        margin-bottom: 2px;
-      }
-      
-      .contact-value {
-        font-size: 14px;
-        font-weight: 600;
-        color: #333;
-      }
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fare-value {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: $blue;
+    }
+
+    .discount-badge {
+      background: #16a34a;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.3px;
     }
   }
+
+  ion-button {
+    --border-radius: 10px;
+    --box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+    font-weight: 600;
+    text-transform: none;
+  }
+}
+
+// ── Loading ────────────────────────────────────────────────
+.loading-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 48px 16px;
+}
+
+.loading-card {
+  background: $white;
+  border-radius: $radius;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: $shadow;
+  width: 100%;
+
+  ion-spinner {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 14px;
+  }
+
+  p {
+    margin: 0;
+    color: $text-muted;
+    font-size: 14px;
+  }
+}
+
+// ── Animation ──────────────────────────────────────────────
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(1.3); }
 }

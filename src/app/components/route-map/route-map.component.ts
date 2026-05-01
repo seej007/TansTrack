@@ -25,23 +25,22 @@ export class RouteMapComponent implements AfterViewInit, OnChanges, OnDestroy {
   routeMarkers: any[] = []; // Store markers for cleanup
   private busSimSub: Subscription | null = null;
   private simulatedVehicleMarker: any = null;
+  
   constructor(private busSimulatorService: BusSimulatorService) {}
 
   ngAfterViewInit() {
-  // Read the token from environment so it can be switched between dev/prod
-  mapboxgl.accessToken = environment.mapbox?.accessToken || '';
+    // Point to the pre-built worker so the bundler never re-transpiles it.
+    // Must be set before every new Map() call; absolute path avoids route-relative issues.
+    (mapboxgl as any).workerUrl = '/assets/mapbox-gl-csp-worker.js';
+    mapboxgl.accessToken = environment.mapbox?.accessToken || '';
     this.map = new mapboxgl.Map({
       container: this.mapContainer.nativeElement,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: [123.920994, 10.311008], // Cebu coordinates
       zoom: 12,
-      // Disable telemetry to prevent console errors from ad blockers
       trackResize: true,
       preserveDrawingBuffer: false
     });
-    
-    // Disable Mapbox telemetry/analytics events
-    (this.map as any)._requestManager._skuToken = '';
 
     // Add geolocate control to track user's real-time location
     const geolocateControl = new mapboxgl.GeolocateControl({

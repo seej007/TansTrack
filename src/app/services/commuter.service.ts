@@ -169,20 +169,16 @@ export class CommuterService {
    * Get passenger type from user profile
    */
   getPassengerType(): string {
-    const profile = localStorage.getItem('commuterProfile');
-    console.log('📋 Getting passenger type from localStorage:', profile);
-    if (profile) {
+    const userData = localStorage.getItem('currentUser');
+    if (userData) {
       try {
-        const parsed = JSON.parse(profile);
-        console.log('✅ Parsed profile:', parsed);
-        console.log('🎭 Passenger type:', parsed.passengerType);
-        return parsed.passengerType || 'Regular';
+        const parsed = JSON.parse(userData);
+        // Handle both camelCase (frontend) and snake_case (backend response)
+        return parsed.passengerType || parsed.passenger_type || 'Regular';
       } catch (e) {
-        console.error('❌ Error parsing profile:', e);
         return 'Regular';
       }
     }
-    console.log('⚠️ No profile found, defaulting to Regular');
     return 'Regular';
   }
 }

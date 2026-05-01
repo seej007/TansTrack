@@ -23,7 +23,7 @@
             <ion-icon name="person"></ion-icon>
           </div>
           <div class="profile-info">
-            <h2>{{ userProfile.name || 'Guest User' }}</h2>
+            <h2>{{ userProfile.name }}</h2>
             <p>{{ userProfile.passengerType }} Passenger</p>
             <!-- Verification Badge -->
             <ion-chip *ngIf="userProfile.idVerified" color="success">
@@ -52,11 +52,11 @@
             <ion-item>
               <ion-icon name="mail-outline" slot="start"></ion-icon>
               <ion-input
-                label="Email"
+                label="Email or Student email for discount"
                 labelPlacement="floating"
                 type="email"
                 [(ngModel)]="userProfile.email"
-                [readonly]="!isEditing"
+                [readonly]="isEditing"
                 name="email"
                 placeholder="Enter your email">
               </ion-input>
@@ -106,19 +106,19 @@
 
           <!-- ID Verification Section -->
           <div class="id-verification-section">
-            <ion-item lines="none" *ngIf="!userProfile.idVerified && (userProfile.passengerType === 'PWD' || userProfile.passengerType === 'Senior')">
+            <ion-item lines="none" *ngIf="!userProfile.idVerified">
               <ion-icon name="alert-circle-outline" slot="start" color="warning"></ion-icon>
               <ion-label class="ion-text-wrap">
                 <h3>Verify Your ID</h3>
-                <p>Scan your {{ userProfile.passengerType }} ID to get discounts</p>
+                <p>Scan your PWD, Senior Citizen, or Student ID to get discounts</p>
               </ion-label>
             </ion-item>
 
-            <ion-button 
-              expand="block" 
-              color="secondary" 
+            <ion-button
+              expand="block"
+              color="secondary"
               (click)="showIdScanner = true"
-              *ngIf="!userProfile.idVerified && (userProfile.passengerType === 'PWD' || userProfile.passengerType === 'Senior')">
+              *ngIf="!userProfile.idVerified">
               <ion-icon name="scan" slot="start"></ion-icon>
               Scan ID for Verification
             </ion-button>
@@ -248,6 +248,18 @@
         </div>
       </ion-card-content>
     </ion-card>
+
+    <!-- Save / Logout -->
+    <div class="bottom-actions">
+      <ion-button expand="block" (click)="saveProfile()">
+        <ion-icon name="save-outline" slot="start"></ion-icon>
+        Save Profile
+      </ion-button>
+      <ion-button expand="block" fill="outline" color="danger" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start"></ion-icon>
+        Logout
+      </ion-button>
+    </div>
 
   </div>
 

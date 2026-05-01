@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -71,5 +71,24 @@ export class TripHistoryService {
       `${this.apiUrl}/trips/export/csv`,
       { headers: this.getHeaders(), responseType: 'blob' as 'json' }
     );
+  }
+
+  saveLocalTrip(trip: any): void {
+    const trips = this.getLocalTripsSync();
+    trips.unshift(trip);
+    localStorage.setItem('localTrips', JSON.stringify(trips));
+  }
+
+  getLocalTripsSync(): any[] {
+    try {
+      const stored = localStorage.getItem('localTrips');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  getLocalTrips(): Observable<any> {
+    return of({ success: true, data: this.getLocalTripsSync() });
   }
 }

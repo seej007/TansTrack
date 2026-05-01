@@ -52,6 +52,7 @@ const routes: Routes = [
     loadChildren: () => import('./feedback/feedback.module').then( m => m.FeedbackModule),
     canActivate: [AuthGuard]
   },
+
   {
     path: '**',
     redirectTo: 'login'
